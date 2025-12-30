@@ -48,7 +48,7 @@ export default function ContributorManagePoetry() {
         {myPoetry.map((poem, index) => (
           <div 
             key={index} 
-            className="bg-white border border-gray-100 rounded-[30px] p-8 shadow-sm hover:shadow-md transition-shadow"
+            className="bg-white border border-black/20 rounded-[30px] p-8 shadow-sm hover:shadow-md transition-shadow"
           >
             <div className="flex justify-between items-start mb-4">
               <div className="flex items-center gap-4">

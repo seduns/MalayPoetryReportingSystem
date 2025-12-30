@@ -9,6 +9,10 @@ import ContributorEditPoetry from "../user/component/Contributor/ContributorEdit
 import ContributroProfileDonation from "../user/component/Contributor/ContributroProfileDonation";
 import ContributorManagePoetry from "../user/component/Contributor/ContributorManagePoetry";
 import ContributorRegisterCoAuthor from "../user/component/Contributor/ContributorRegisterCoAuthor";
+import PoetryDiscoverPage from "../user/pages/PoetryDiscoverPage";
+import PoetryDetailPage from "../user/pages/PoetryDetailPage";
+import DonationPage from "../user/pages/DonationPage";
+import UserProfilePage from "../user/pages/UserProfilePage";
 
 export default function UserRoute() {
   return (
@@ -16,6 +20,10 @@ export default function UserRoute() {
       <Route path="/" element={<Homepage />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      <Route path="/poetry-discovery" element={<PoetryDiscoverPage />} />
+      <Route path="/poetry-detail" element={<PoetryDetailPage />} />
+      <Route path="/donation" element={<DonationPage />} />
+      <Route path="/user-profile" element={<UserProfilePage />} />
 
       <Route path="/contributor" element={<ContributorPage />}>
         <Route index element={<Navigate to="dashboard" replace />} />

@@ -5,10 +5,11 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import ContributorSideBar from "../component/Contributor/ContributorSideBar";
+import { Link } from "react-router-dom";
 
 const PoetryCard = ({ title }) => (
   <div className="px-2">
-    <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100 flex flex-col h-80 text-left">
+    <div className="bg-white p-6 rounded-xl shadow-md border border-black/20 flex flex-col h-80 text-left">
       <h3 className="text-2xl font-bold text-orange-500 mb-4 leading-tight">
         {title}
       </h3>
@@ -50,32 +51,37 @@ export default function Homepage() {
   ];
 
   return (
-    <div className="min-h-screen bg-white font-sans text-gray-900">
+    <div className="min-h-screen w-screen flex-col md:flex-row font-sans">
 
-      <button className="absolute right-2 bg-white-500 p-3 rounded-full text-black hover:bg-orange-600">
-           <a href="/login" className="font-bold text-coral hover:underline">Sign up</a>  
-      </button>
+      <Link to="/login">
+    <button className="absolute top-6 right-6 z-20 bg-coral px-6 py-2 rounded-3xl text-white hover:opacity-90 transition-colors">
+      Sign up
+    </button>
+  </Link>
+     
       {/* Hero Section */}
-      <section className="relative pt-20 pb-12 px-6 text-center overflow-hidden">
-        {/* Abstract Illustration Placeholder */}
-        <div className="absolute top-10 left-10 opacity-20">
-            {/* You would place your SVG or Image here for the balloon man */}
-            <div className="w-32 h-64 border-2 border-gray-300 rounded-full" />
-        </div>
+<section className="relative pt-20 pb-12 px-6 text-center overflow-hidden min-h-[500px] flex items-center justify-center">
+  
+  {/* BACKGROUND IMAGE CONTAINER */}
+  <div className="absolute inset-0 -z-10">
+    {/* w-full h-full ensures the div is exactly the size of the section */}
+    <div className="custom-bg w-full h-full" />
+  </div>
 
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-6xl md:text-8xl font-bold mb-2">
-            Poetry <br />
-            <span className="text-orange-500 italic">The</span> Space
-          </h1>
-          <p className="text-gray-500 tracking-widest uppercase text-xs mt-4">
-            Discover, read, and appreciate poetry
-          </p>
-        </div>
-      </section>
+  {/* Content stays relative to sit on top of the z-10 background */}
+  <div className="relative max-w-4xl mx-auto z-10">
+    <h1 className="text-6xl md:text-8xl font-bold mb-2">
+      Poetry <br />
+      <span className="text-orange-500 italic">The</span> Space
+    </h1>
+    <p className="text-gray-500 tracking-widest uppercase text-xs mt-4">
+      Discover, read, and appreciate poetry
+    </p>
+  </div>
+</section>
 
       {/* Search Bar */}
-      <div className="max-w-2xl mx-auto px-6 mb-16">
+      {/* <div className="max-w-2xl mx-auto px-6 mb-16">
         <div className="relative flex items-center">
           <input
             type="text"
@@ -88,7 +94,7 @@ export default function Homepage() {
             </svg>
           </button>
         </div>
-      </div>
+      </div> */}
 
 
       {/* Poetry Slider Section */}

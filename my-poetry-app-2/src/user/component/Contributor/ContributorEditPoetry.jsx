@@ -24,7 +24,7 @@ export default function ContributorEditPoetry() {
             <input 
               type="text" 
               defaultValue="Whisper of the night"
-              className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-red-100 outline-none transition-all shadow-sm"
+              className="w-full bg-white border border-black/20 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-red-100 outline-none transition-all shadow-sm"
             />
           </div>
 
@@ -32,14 +32,14 @@ export default function ContributorEditPoetry() {
             <label className="text-gray-500 font-bold text-sm ml-1">Poetry Description</label>
             <textarea 
               defaultValue="A short background and meaning behind this poetry..."
-              className="w-full bg-white border border-gray-200 rounded-2xl px-4 py-4 text-sm focus:ring-2 focus:ring-red-100 outline-none transition-all min-h-[140px] resize-none shadow-sm"
+              className="w-full bg-white border border-black/20 rounded-2xl px-4 py-4 text-sm focus:ring-2 focus:ring-red-100 outline-none transition-all min-h-[140px] resize-none shadow-sm"
             />
           </div>
 
           <div className="space-y-2 relative">
             <label className="text-gray-500 font-bold text-sm ml-1">Poetry Category</label>
             <div className="relative">
-              <select className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-700 outline-none cursor-pointer appearance-none shadow-sm">
+              <select className="w-full bg-white border border-black/20 rounded-xl px-4 py-3 text-sm text-gray-700 outline-none cursor-pointer appearance-none shadow-sm">
                 <option>Romactic</option>
                 <option>Nature</option>
                 <option>Life</option>
@@ -57,7 +57,7 @@ export default function ContributorEditPoetry() {
             <input 
               type="text" 
               defaultValue="Danial Rechardoo"
-              className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none shadow-sm mb-2"
+              className="w-full bg-white border border-black/20 rounded-xl px-4 py-3 text-sm outline-none shadow-sm mb-2"
             />
             <div className="flex justify-end">
               <button className="bg-[#FF5C5C] text-white px-5 py-2 rounded-lg text-[10px] font-bold hover:bg-[#eb4b4b] transition-all">
@@ -68,7 +68,7 @@ export default function ContributorEditPoetry() {
         </div>
 
         {/* Right Column: Poetry Content Display */}
-        <div className="flex-1 bg-white border border-gray-200 rounded-[30px] shadow-sm p-10 flex flex-col">
+        <div className="flex-1 bg-white border border-black/20 rounded-[30px] shadow-sm p-10 flex flex-col">
           <label className="text-gray-400 font-bold text-sm mb-6">Poetry Content</label>
           <div className="flex-1 overflow-y-auto custom-scrollbar">
             <div className="space-y-6 font-serif italic text-gray-800 leading-relaxed text-base">

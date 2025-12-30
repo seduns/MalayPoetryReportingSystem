@@ -20,7 +20,7 @@ export default function AdminGenerateReport() {
       </div>
 
       {/* Table Container */}
-      <div className="flex-1 bg-white border border-gray-100 rounded-[30px] shadow-sm overflow-hidden flex flex-col">
+      <div className="flex-1 bg-white border border-black/20 rounded-[30px] shadow-sm overflow-hidden flex flex-col">
         <table className="w-full border-collapse">
           <thead>
             <tr className="bg-[#E9ECEF] text-gray-500 text-xs uppercase tracking-widest">
@@ -31,7 +31,7 @@ export default function AdminGenerateReport() {
               <th className="py-5 px-8 text-center font-semibold">Delete</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-50">
+          <tbody className="divide-y divide-gray-200">
             {reports.map((item, index) => (
               <tr key={index} className="hover:bg-gray-50 transition-colors">
                 <td className="py-4 px-8 font-bold text-gray-800 text-sm">{item.title}</td>

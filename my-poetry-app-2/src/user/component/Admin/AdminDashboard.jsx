@@ -26,7 +26,7 @@ export default function AdminDashboard() {
         {stats.map((stat, index) => (
           <div
             key={index}
-            className="p-5 border border-gray-100 rounded-[20px] shadow-sm bg-white"
+            className="p-5 border border-black/20 rounded-[20px] shadow-sm bg-white"
           >
             <p className="text-gray-400 text-xs font-medium mb-1">{stat.label}</p>
             <p className="text-2xl font-bold text-gray-800">{stat.value}</p>
@@ -37,12 +37,12 @@ export default function AdminDashboard() {
       {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Bar Chart Placeholder */}
-        <div className="p-6 border border-gray-100 rounded-[20px] shadow-sm min-h-[300px] flex items-center justify-center bg-white">
+        <div className="p-6 border border-black/20 rounded-[20px] shadow-sm min-h-[300px] flex items-center justify-center bg-white">
            <p className="text-gray-300 italic">Bar Chart Placeholder (Use Recharts/Chart.js)</p>
         </div>
 
         {/* Donut Chart Placeholder */}
-        <div className="p-6 border border-gray-100 rounded-[20px] shadow-sm min-h-[300px] flex items-center justify-center bg-white">
+        <div className="p-6 border border-black/20 rounded-[20px] shadow-sm min-h-[300px] flex items-center justify-center bg-white">
            <p className="text-gray-300 italic">Donut Chart Placeholder</p>
         </div>
       </div>

@@ -22,13 +22,13 @@ export default function ContributroProfileDonation() {
       <div className="flex gap-8 flex-1 overflow-hidden px-4 mb-4">
         
         {/* Left Column: Profile Form */}
-        <div className="flex-1 bg-white border border-gray-100 rounded-[30px] shadow-sm p-10 flex flex-col space-y-6 overflow-y-auto">
+        <div className="flex-1 bg-white border border-black/20 rounded-[30px] shadow-sm p-10 flex flex-col space-y-6 overflow-y-auto">
           <div className="space-y-2">
             <label className="text-gray-400 font-bold text-sm ml-1">Author name:</label>
             <input 
               type="text" 
               defaultValue="Naim Danial"
-              className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-red-100 outline-none transition-all"
+              className="w-full bg-white border border-black/20 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-red-100 outline-none transition-all"
             />
           </div>
 
@@ -37,7 +37,7 @@ export default function ContributroProfileDonation() {
             <input 
               type="email" 
               defaultValue="danial@gmail.com"
-              className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-red-100 outline-none transition-all"
+              className="w-full bg-white border border-black/20 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-red-100 outline-none transition-all"
             />
           </div>
 
@@ -46,7 +46,7 @@ export default function ContributroProfileDonation() {
             <input 
               type="password" 
               defaultValue="danial12344"
-              className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-red-100 outline-none transition-all"
+              className="w-full bg-white border border-black/20 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-red-100 outline-none transition-all"
             />
           </div>
 
@@ -54,7 +54,7 @@ export default function ContributroProfileDonation() {
             <label className="text-gray-400 font-bold text-sm ml-1">Author bio:</label>
             <textarea 
               defaultValue="Poet who writes about silence, love, and midnight thoughts."
-              className="w-full bg-white border border-gray-200 rounded-2xl px-4 py-4 text-sm focus:ring-2 focus:ring-red-100 outline-none transition-all min-h-[120px] resize-none"
+              className="w-full bg-white border border-black/20 rounded-2xl px-4 py-4 text-sm focus:ring-2 focus:ring-red-100 outline-none transition-all min-h-[120px] resize-none"
             />
           </div>
 
@@ -64,7 +64,7 @@ export default function ContributroProfileDonation() {
         </div>
 
         {/* Right Column: Donation Dashboard */}
-        <div className="flex-1 bg-white border border-gray-100 rounded-[30px] shadow-sm p-10 flex flex-col">
+        <div className="flex-1 bg-white border border-black/20 rounded-[30px] shadow-sm p-10 flex flex-col">
           
           {/* Top Profile Header */}
           <div className="flex items-center gap-6 mb-12">

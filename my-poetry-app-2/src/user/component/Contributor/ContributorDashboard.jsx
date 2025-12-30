@@ -22,7 +22,7 @@ export default function ContributorDashboard() {
       {/* Metric Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {stats.map((stat, index) => (
-          <div key={index} className="bg-white border border-gray-100 rounded-[25px] p-6 shadow-sm flex flex-col h-[180px]">
+          <div key={index} className="bg-white border border-black/20 rounded-[25px] p-6 shadow-sm flex flex-col h-[180px]">
              {/* Small Icon Box */}
             <div className={`w-10 h-10 ${stat.color} rounded-lg flex items-center justify-center mb-4`}>
                 <span className={`material-icons ${stat.iconColor} text-sm font-bold`}>description</span>
@@ -37,7 +37,7 @@ export default function ContributorDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 min-h-0">
         
         {/* Bar/Line Chart Container */}
-        <div className="lg:col-span-2 bg-white border border-gray-100 rounded-[30px] p-6 shadow-sm flex flex-col">
+        <div className="lg:col-span-2 bg-white border border-black/20 rounded-[30px] p-6 shadow-sm flex flex-col">
           <p className="text-gray-400 text-xs font-bold mb-4">BarLineChart</p>
           <div className="flex-1 bg-gray-50 rounded-xl flex items-center justify-center border border-dashed border-gray-200">
              {/* Placeholder for Bar Chart (Views vs Likes) */}
@@ -52,7 +52,7 @@ export default function ContributorDashboard() {
         </div>
 
         {/* Donut Chart Container */}
-        <div className="bg-white border border-gray-100 rounded-[30px] p-6 shadow-sm flex flex-col">
+        <div className="bg-white border border-black/20 rounded-[30px] p-6 shadow-sm flex flex-col">
           <div className="flex-1 bg-gray-50 rounded-xl flex items-center justify-center border border-dashed border-gray-200 relative">
              {/* Center Text of Donut */}
              <div className="absolute flex flex-col items-center">

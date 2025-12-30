@@ -1,18 +1,22 @@
 import React from "react";
+import { Link } from "react-router-dom"; // Use Link for internal routing
 
 export default function Login() {
   return (
-    <div className="flex min-h-screen flex-col md:flex-row font-sans">
+    <div className="flex min-h-screen w-screen flex-col md:flex-row font-sans">
       {/* Left Side: Branding & Illustration */}
       <div className="flex w-full flex-col items-center justify-center bg-coral p-10 text-white md:w-1/2">
+        
+        {/* The Illustration Box */}
         <div className="relative mb-8 h-80 w-80 overflow-hidden rounded-3xl bg-white/20 p-4 shadow-xl">
-          {/* Placeholder for the illustration of people working */}
-          <img 
-            src="https://placehold.co/600x600/png?text=Illustration+Here" 
-            alt="Poetry Space" 
-            className="h-full w-full rounded-2xl object-cover"
-          />
+          {/* FIX: Removed -z-10 and used z-0. 
+              The image container now fills the rounded box properly.
+          */}
+          <div className="absolute inset-0 z-0">
+            <div className="login-register-bg w-full h-full" />
+          </div>
         </div>
+        
         <h1 className="text-3xl font-bold">Poetry Space</h1>
         <p className="mt-4 max-w-sm text-center text-sm font-light leading-relaxed opacity-90">
           Discover, read, and appreciate poetry from diverse voices, explore full poems with detailed insights.
@@ -38,7 +42,7 @@ export default function Login() {
             {/* Login As Dropdown */}
             <div>
               <label className="block text-xs font-semibold text-gray-500 mb-1">Login as</label>
-              <select className="w-full rounded-xl bg-gray-100 border-none p-4 text-sm focus:ring-2 focus:ring-coral">
+              <select className="w-full rounded-xl bg-gray-100 border-none p-4 text-sm focus:ring-2 focus:ring-coral outline-none">
                 <option>Author</option>
                 <option>Reader</option>
                 <option>Admin</option>
@@ -53,7 +57,7 @@ export default function Login() {
                 <input 
                   type="email" 
                   placeholder="Enter your email" 
-                  className="w-full rounded-xl bg-gray-100 border-none p-4 pl-12 text-sm focus:ring-2 focus:ring-coral"
+                  className="w-full rounded-xl bg-gray-100 border-none p-4 pl-12 text-sm focus:ring-2 focus:ring-coral outline-none"
                 />
               </div>
             </div>
@@ -66,7 +70,7 @@ export default function Login() {
                 <input 
                   type="password" 
                   placeholder="Enter your password" 
-                  className="w-full rounded-xl bg-gray-100 border-none p-4 pl-12 text-sm focus:ring-2 focus:ring-coral"
+                  className="w-full rounded-xl bg-gray-100 border-none p-4 pl-12 text-sm focus:ring-2 focus:ring-coral outline-none"
                 />
               </div>
             </div>
@@ -81,13 +85,16 @@ export default function Login() {
             </div>
 
             {/* Sign In Button */}
-            <button className="flex w-full items-center justify-center gap-2 rounded-xl bg-coral py-4 font-bold text-white shadow-lg shadow-coral/30 hover:bg-coral/90 transition">
+            <button className="flex w-full items-center justify-center gap-2 rounded-xl bg-coral py-4 font-bold text-white shadow-lg shadow-coral/30 hover:opacity-90 transition-all active:scale-[0.98]">
               <span>📲</span> Sign In
             </button>
           </form>
 
           <p className="mt-12 text-center text-sm text-gray-400">
-            Don't have an account? <a href="/register" className="font-bold text-coral hover:underline">Sign up</a>
+            Don't have an account?{" "}
+            <Link to="/register" className="font-bold text-coral hover:underline">
+              Sign up
+            </Link>
           </p>
         </div>
       </div>

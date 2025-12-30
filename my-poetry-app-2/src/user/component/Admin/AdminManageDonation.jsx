@@ -33,7 +33,7 @@ export default function AdminManageDonation() {
         {stats.map((stat, index) => (
           <div 
             key={index} 
-            className="bg-white border border-gray-100 rounded-[25px] p-10 shadow-sm flex flex-col justify-center min-h-[160px]"
+            className="bg-white border border-black/20 rounded-[25px] p-10 shadow-sm flex flex-col justify-center min-h-[160px]"
           >
             <p className="text-gray-400 text-xs font-bold mb-2 uppercase tracking-tight">
                 {stat.label}
@@ -46,7 +46,7 @@ export default function AdminManageDonation() {
       </div>
 
       {/* Donation Table */}
-      <div className="flex-1 bg-white border border-gray-100 rounded-[30px] shadow-sm overflow-hidden flex flex-col mx-4 mb-4">
+      <div className="flex-1 bg-white border border-black/20 rounded-[30px] shadow-sm overflow-hidden flex flex-col mx-4 mb-4">
         <div className="overflow-y-auto">
           <table className="w-full border-collapse">
             <thead>
@@ -57,7 +57,7 @@ export default function AdminManageDonation() {
                 <th className="py-5 px-8 text-left font-semibold">Donation Amount</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-gray-200">
               {donationData.map((item, index) => (
                 <tr key={index} className="hover:bg-gray-50 transition-colors">
                   <td className="py-5 px-8 font-bold text-gray-800 text-sm">{item.title}</td>

@@ -26,7 +26,7 @@ export default function AdminGenerateReport() {
       </div>
 
       {/* Table Container */}
-      <div className="flex-1 bg-white border border-gray-100 rounded-[30px] shadow-sm overflow-hidden flex flex-col mx-4 mb-4">
+      <div className="flex-1 bg-white border border-black/20 rounded-[30px] shadow-sm overflow-hidden flex flex-col mx-4 mb-4">
         <div className="overflow-y-auto">
           <table className="w-full border-collapse">
             <thead>

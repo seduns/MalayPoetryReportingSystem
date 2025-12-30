@@ -10,6 +10,7 @@ import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined
 import ListAltOutlinedIcon from '@mui/icons-material/ListAltOutlined';
 import layersOutlinedIcon from '@mui/icons-material/LayersOutlined';
 import PeopleOutlineOutlinedIcon from '@mui/icons-material/PeopleOutlineOutlined';
+import EditIcon from '@mui/icons-material/Edit';
 
 export default function ContributorSideBar() {
     const navigate = useNavigate();
@@ -21,13 +22,13 @@ export default function ContributorSideBar() {
     const menuItems = [
         { icon: DashboardOutlinedIcon, label: "Dashboard", path: "/contributor/dashboard" },
         { icon: InsertDriveFileOutlinedIcon, label: "Create Poetry", path: "/contributor/create-poetry" },
-        { icon: HomeOutlinedIcon, label: "Edit Poetry", path: "/contributor/edit-poetry" },
+        { icon: EditIcon, label: "Edit Poetry", path: "/contributor/edit-poetry" },
         { icon: PersonOutlineOutlinedIcon, label: "Contributor Profile", path: "/contributor/profile" },
         { icon: ListAltOutlinedIcon, label: "Manage Poetry", path: "/contributor/manage-poetry" },
         // { icon: layersOutlinedIcon, label: "Monitor Donation", path: "/contributor/donation" },
         { icon: PeopleOutlineOutlinedIcon, label: "Register Co-Author", path: "/contributor/register-author" },
     ];
-
+    
     return (
         <div className="flex flex-col items-center w-fit py-4 px-2 border border-gray-100 rounded-[30px] shadow-sm bg-white">
             {menuItems.map((item, index) => (

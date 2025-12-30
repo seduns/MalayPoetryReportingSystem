@@ -3,12 +3,59 @@
 
 @theme {
   --font-sans: "Montserrat", ui-sans-serif, system-ui;
-  --color-coral: #FF5F45; /* The primary color from your design */
+  --color-coral: #FF5F45;
+  --color-coral-light: #FF9B8A;
 }
 
+/* Remove default spacing */
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
 
+}
 
-/* index.css */
-html, body {
-  overflow: auto; 
+/* GLOBAL APP LAYOUT */
+body {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  font-family: var(--font-sans);  
+  flex-direction: column;
+  overflow-x: hidden;
+}
+
+button { 
+  cursor: pointer;
+}
+
+.custom-bg { 
+  background-image: url('./assets/homepage.png'); 
+  background-size: contain; 
+  background-position: center; 
+  background-repeat: no-repeat;
+}
+
+.login-register-bg { 
+  background-image: url('./assets/image2.png'); 
+  background-size: contain; 
+  background-position: center; 
+  background-repeat: no-repeat;
+}
+/* If you want a class that automatically adds padding and centering too */
+.brand-container {
+  background-color: var(--color-coral);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Responsive behavior (md:flex-row equivalent) */
+@media (min-width: 768px) {
+  body {
+    flex-direction: row;
+  }
 }

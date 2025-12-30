@@ -32,19 +32,19 @@ export default function AdminManageAdmin() {
 
       <div className="flex gap-8 flex-1 overflow-hidden px-4 mb-4">
         {/* Left: Admin List Table */}
-        <div className="flex-[1.2] bg-white border border-gray-100 rounded-[30px] shadow-sm overflow-hidden flex flex-col">
+        <div className="flex-[1.2] bg-white border border-black/20 rounded-[30px] shadow-sm overflow-hidden flex flex-col">
           <table className="w-full border-collapse">
             <thead>
               <tr className="bg-[#E9ECEF] text-gray-500 text-xs uppercase tracking-widest sticky top-0">
-                <th className="py-5 px-8 text-left font-semibold">Admin</th>
-                <th className="py-5 px-8 text-right font-semibold">Username</th>
+                <th className="py-5 px-8 font-semibold">Admin</th>
+                <th className="py-5 px-8 font-semibold">Username</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-gray-200">
               {admins.map((admin, index) => (
                 <tr key={index} className="hover:bg-gray-50 transition-colors">
                   <td className="py-4 px-8 font-bold text-gray-800 text-sm">{admin.name}</td>
-                  <td className="py-4 px-8 font-bold text-gray-600 text-sm text-right">{admin.username}</td>
+                  <td className="py-4 px-8 font-bold text-gray-600 text-sm">{admin.username}</td>
                 </tr>
               ))}
             </tbody>
@@ -52,7 +52,7 @@ export default function AdminManageAdmin() {
         </div>
 
         {/* Right: Add New Admin Form */}
-        <div className="flex-1 bg-white border border-gray-100 rounded-[30px] shadow-sm p-10 flex flex-col">
+        <div className="flex-1 bg-white border border-black/20 rounded-[30px] shadow-sm p-10 flex flex-col">
           <h2 className="text-3xl font-bold text-gray-800 text-center mb-8">Add New Admin</h2>
           
           <div className="space-y-5">

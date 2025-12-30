@@ -18,7 +18,7 @@ export default function ContributorRegisterCoAuthor() {
       <div className="flex-1 px-4 space-y-8 overflow-y-auto pb-10">
         {/* Poetry Selection Dropdown */}
         <div className="relative">
-          <select className="w-full bg-white border border-gray-200 rounded-xl px-6 py-4 text-sm text-gray-400 outline-none cursor-pointer appearance-none shadow-sm">
+          <select className="w-full bg-white border border-black/20 rounded-xl px-6 py-4 text-sm text-gray-400 outline-none cursor-pointer appearance-none shadow-sm">
             <option>Whispers of the Night</option>
             <option>Ink on My Heart</option>
             <option>Between Silent Lines</option>
@@ -31,7 +31,7 @@ export default function ContributorRegisterCoAuthor() {
         </div>
 
         {/* Selected Poetry Card */}
-        <div className="bg-white border border-gray-100 rounded-[30px] p-10 shadow-sm">
+        <div className="bg-white border border-black/20 rounded-[30px] p-10 shadow-sm">
           <h2 className="text-4xl font-bold text-gray-800 mb-4">Whispers of the Night</h2>
           <div className="flex gap-8 text-xs text-gray-300 font-medium">
             <p>By <span className="text-gray-400 ml-1">Amelia Vence</span></p>
@@ -48,7 +48,7 @@ export default function ContributorRegisterCoAuthor() {
               {currentCoAuthors.map((name, index) => (
                 <div 
                   key={index} 
-                  className="bg-white border border-gray-200 rounded-xl px-6 py-3 text-sm font-bold text-gray-800 shadow-sm flex items-center gap-3"
+                  className="bg-white border border-black/20 rounded-xl px-6 py-3 text-sm font-bold text-gray-800 shadow-sm flex items-center gap-3"
                 >
                   {name}
                   {/* Optional: Add a 'remove' icon here if needed */}
@@ -63,7 +63,7 @@ export default function ContributorRegisterCoAuthor() {
               <input 
                 type="text" 
                 placeholder="Enter Co Author ID"
-                className="flex-1 bg-white border border-gray-200 rounded-xl px-6 py-4 text-sm focus:ring-2 focus:ring-red-100 outline-none transition-all shadow-sm"
+                className="flex-1 bg-white border border-black/20 rounded-xl px-6 py-4 text-sm focus:ring-2 focus:ring-red-100 outline-none transition-all shadow-sm"
               />
               <button className="bg-[#FF5C5C] hover:bg-[#eb4b4b] text-white font-bold px-12 py-4 rounded-xl transition-all shadow-md active:scale-95">
                 Add

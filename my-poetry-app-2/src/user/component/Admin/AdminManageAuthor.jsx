@@ -30,7 +30,7 @@ export default function AdminManageAuthor() {
 
       <div className="flex gap-6 flex-1 overflow-hidden">
         {/* Left: Author List Table */}
-        <div className="flex-[1.5] bg-white border border-gray-100 rounded-[30px] shadow-sm overflow-hidden flex flex-col">
+        <div className="flex-[1.5] bg-white border border-black/20 rounded-[30px] shadow-sm overflow-hidden flex flex-col">
           <table className="w-full border-collapse">
             <thead>
               <tr className="bg-[#E9ECEF] text-gray-500 text-xs uppercase tracking-widest">
@@ -39,7 +39,7 @@ export default function AdminManageAuthor() {
                 <th className="py-5 px-8 text-center font-semibold">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100 overflow-y-auto">
+            <tbody className="divide-y divide-gray-200 overflow-y-auto">
               {authors.map((author, index) => (
                 <tr key={index} className="hover:bg-gray-50 transition-colors">
                   <td className="py-4 px-8 font-bold text-gray-800 text-sm">{author.name}</td>
@@ -64,7 +64,7 @@ export default function AdminManageAuthor() {
         </div>
 
         {/* Right: Author Detail Card */}
-        <div className="flex-1 bg-white border border-gray-100 rounded-[30px] shadow-sm p-8 flex flex-col items-center">
+        <div className="flex-1 bg-white border border-black/20 rounded-[30px] shadow-sm p-8 flex flex-col items-center">
           {/* Avatar and Info */}
           <div className="flex items-center gap-6 w-full mb-10">
             <div className="w-24 h-24 bg-[#FF5C5C] rounded-full flex items-center justify-center text-white text-4xl font-bold shadow-lg">

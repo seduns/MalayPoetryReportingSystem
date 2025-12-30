@@ -5,11 +5,13 @@ import AdminSideBar from "../component/Admin/AdminSideBar";
 export default function AdminPage() {
   return (
     // Main container: Flex row to put Sidebar and Content side-by-side
-    <div className="flex min-h-screen bg-[#FDFDFD] font-sans text-gray-900">
+    <div className="flex min-h-screen w-screen flex-col md:flex-row font-sans">
       
       {/* 1. Sidebar Section: Fixed width, non-shrinking */}
-      <aside className="sticky top-0 h-screen w-0 flex items-center justify-center bg-white border-r border-gray-50">
-        <AdminSideBar />
+       <aside className="sticky top-0 h-screen w-20 bg-white border-r border-gray-50">
+        <div className="pl-30 pt-40">
+          <AdminSideBar />
+        </div>
       </aside>
 
       {/* 2. Content Section: Fills remaining space and centers the Outlet */}

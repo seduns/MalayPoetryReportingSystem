@@ -17,7 +17,7 @@ export default function ContributorCreatePoetry() {
       <div className="flex gap-6 flex-1 overflow-hidden px-4">
         
         {/* Left Column: Poetry Details */}
-        <div className="flex-1 bg-white border border-gray-100 rounded-[30px] shadow-sm p-8 space-y-6 overflow-y-auto">
+        <div className="flex-1 bg-white border border-black/20 rounded-[30px] shadow-sm p-8 space-y-6 overflow-y-auto">
           <div className="space-y-2">
             <label className="text-gray-500 font-bold text-xs uppercase ml-1">Poetry Title</label>
             <input 
@@ -61,7 +61,7 @@ export default function ContributorCreatePoetry() {
         </div>
 
         {/* Right Column: Poetry Content Editor */}
-        <div className="flex-1 bg-white border border-gray-100 rounded-[30px] shadow-sm p-8 flex flex-col">
+        <div className="flex-1 bg-white border border-black/20 rounded-[30px] shadow-sm p-8 flex flex-col">
           <label className="text-gray-500 font-bold text-xs uppercase ml-1 mb-4">Poetry Content</label>
           <textarea 
             placeholder="Write your poetry here..."

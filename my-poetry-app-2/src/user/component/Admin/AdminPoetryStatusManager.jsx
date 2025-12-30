@@ -44,7 +44,7 @@ export default function AdminPoetryStatusManager() {
       {/* Top Stat Cards */}
       <div className="grid grid-cols-4 gap-4 mb-6 px-4">
         {stats.map((stat, index) => (
-          <div key={index} className="bg-white border border-gray-100 rounded-[20px] py-4 shadow-sm flex flex-col items-center justify-center">
+          <div key={index} className="bg-white border border-black/20 rounded-[20px] py-4 shadow-sm flex flex-col items-center justify-center">
             <p className="text-2xl font-bold text-gray-800">{stat.value}</p>
             <p className={`${stat.color} text-xs font-medium`}>{stat.label}</p>
           </div>
@@ -52,7 +52,7 @@ export default function AdminPoetryStatusManager() {
       </div>
 
       {/* Poetry Table */}
-      <div className="flex-1 bg-white border border-gray-100 rounded-[30px] shadow-sm overflow-hidden flex flex-col mx-4">
+      <div className="flex-1 bg-white border border-black/20 rounded-[30px] shadow-sm overflow-hidden flex flex-col mx-4">
         <div className="overflow-y-auto">
           <table className="w-full border-collapse">
             <thead>
@@ -63,7 +63,7 @@ export default function AdminPoetryStatusManager() {
                 <th className="py-5 px-8 text-center font-semibold">View/Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-gray-200">
               {poetryData.map((item, index) => (
                 <tr key={index} className="hover:bg-gray-50 transition-colors">
                   <td className="py-4 px-8 font-bold text-gray-800 text-sm">{item.title}</td>
