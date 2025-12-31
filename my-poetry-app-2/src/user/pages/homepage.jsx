@@ -50,6 +50,10 @@ export default function Homepage() {
     "When the Sky Weeps",
   ];
 
+  const handleOnn = () => {
+    console.log("yooo");
+  }
+
   return (
     <div className="min-h-screen w-screen flex-col md:flex-row font-sans">
 
@@ -111,7 +115,7 @@ export default function Homepage() {
           </Slider>
         </div>
 
-        <button className="bg-orange-500 text-white px-8 py-3 rounded-full font-bold shadow-lg hover:bg-orange-600 transition transform hover:scale-105">
+        <button onClick={handleOnn} className="bg-orange-500 text-white px-8 py-3 rounded-full font-bold shadow-lg hover:bg-orange-600 transition transform hover:scale-105">
           Discover More
         </button>
       </section>
