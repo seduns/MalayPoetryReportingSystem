@@ -28,7 +28,7 @@ const authSlices = createSlice({
             .addCase(registerUser.fulfilled, (state, action) => {
                 console.log("registerUser fulfilled", action.payload);
                 state.loading = false;
-                state.accountId = action.payload.data.accountId;
+                state.accountId = action.payload.accountId;
             })
             
             .addCase(loginUser.pending, (state) => {
@@ -42,10 +42,9 @@ const authSlices = createSlice({
                 state.error = action.payload?.message || "Login failed.";
             })
             .addCase(loginUser.fulfilled, (state, action) => {
-                console.log("loginUser fulfilled");
+                console.log("loginUser fulfilled", action);
                 state.loading = false;
-                state.accountId = action.payload.data.accountId;
-                localStorage.setItem("accessToken", action.payload.data.accessToken);
+                state.accountId = action.payload.accountId;
             });
 
     }

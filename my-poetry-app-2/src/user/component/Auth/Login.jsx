@@ -11,42 +11,45 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = async(e) => {
-    e.preventDefault();
-    console.log("Datataa", e);
 
-    // try {
-    //   const data = {
-    //     email: email, // backend uses email as username
-    //     password,
-    //   };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    try {
+        const data = {
+            email: email, // backend uses email as username
+            password,
+          };
 
       
-    //   console.log("Data Auth")
+      console.log("Data Auth", data)
 
-    //   const result = await dispatch(loginUser(data));
-    //   const payload = result.payload;
+      const result = await dispatch(loginUser(data));
+      const payload = result.payload;
 
-    //   if (payload?.status === "login_success") {
-    //     alert("Login Successful!");
-    //     console.log("Account details:", payload);
-    //     localStorage.setItem("accessToken", payload.data.accessToken);
+      console.log("payload")
+      console.log("payload", payload)
 
-    //     // Example:
-    //     // localStorage.setItem("accessToken", payload.accessToken);
-    //     // navigate("/admin/dashboard");
-    //   } else {
-    //     alert(payload?.message || "Login failed");
-    //   }
-    // } catch (error) {
-    //   console.error("Login error:", error);
-    //   alert("An unexpected error occurred.");
-    // }
+      if (payload?.status === "login_success") {
+        alert("Login Successful!");
+        console.log("Account details:", payload);
+        localStorage.setItem("accessToken", payload.accessToken);
+
+        if(payload.role === "USER_AUTHOR") {
+          navigate("/contributor/dashboard")
+        } else if(payload.role === "USER_PUBLIC") {
+          navigate("")
+        }
+
+        // navigate("/admin/dashboard");
+      } else {
+        alert(payload?.message || "Login failed");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      alert("An unexpected error occurred.");
+    }
   };
-
-  useEffect(() => {
-    console.log("Component mounted!");
-  }, []);
 
   return (
     <div className="flex min-h-screen w-screen flex-col md:flex-row font-sans">
