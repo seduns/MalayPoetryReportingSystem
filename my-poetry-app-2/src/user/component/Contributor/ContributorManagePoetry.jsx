@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { deletePoetry, getPoetryList } from "../../../store/thunk/PoetryThunk";
+import { deletePoetry, getPoetryByAuthorId, getPoetryList } from "../../../store/thunk/PoetryThunk";
 import { useNavigate } from "react-router-dom";
 import { setSelectedPoetry } from "../../../store/slice/PoetrySlice";
 import Swal from "sweetalert2";
@@ -11,10 +11,11 @@ export default function ContributorManagePoetry() {
 
   // Get poetry list from Redux state
   const { poetryList } = useSelector((state) => state.poetry);
+  const { accountId } = useSelector((state) => state.auth);
 
   // Fetch poetry list on component mount
   useEffect(() => {
-    dispatch(getPoetryList());
+    dispatch(getPoetryByAuthorId(accountId));
   }, [dispatch]);
 
   // Handle Edit click
@@ -48,7 +49,7 @@ const handleDelete = async (id) => {
       confirmButtonColor: "#FF5C5C",
     });
 
-    dispatch(getPoetryList())
+    dispatch(getPoetryByAuthorId(accountId))
   } catch (error) {
     Swal.fire({
       icon: "error",

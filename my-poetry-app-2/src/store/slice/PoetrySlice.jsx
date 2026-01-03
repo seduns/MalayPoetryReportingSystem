@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { loginUser, registerUser } from "../thunk/AuthThunk";
-import { createPoetry, deletePoetry, getPoetry, getPoetryList, updatePoetry } from "../thunk/PoetryThunk";
+import { createPoetry, deletePoetry, getPoetry, getPoetryByAuthorId, getPoetryList, updatePoetry } from "../thunk/PoetryThunk";
 
 const poetrySlices = createSlice({
     name: "poetry",
@@ -95,6 +95,22 @@ const poetrySlices = createSlice({
             .addCase(deletePoetry.fulfilled, (state, action) => {
                 console.log("deletePoetry fulfilled", action.payload);
                 state.loading = false;
+            })
+
+            .addCase(getPoetryByAuthorId.pending, (state) => {
+                console.log("getPoetryByAuthorId pending");
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(getPoetryByAuthorId.rejected, (state, action) => {
+                console.log("getPoetryByAuthorId rejected", action);
+                state.loading = false;
+                state.error = action;
+            })
+            .addCase(getPoetryByAuthorId.fulfilled, (state, action) => {
+                console.log("getPoetryByAuthorId fulfilled", action.payload);
+                state.loading = false;
+                state.poetryList = action.payload
             })
 
     }

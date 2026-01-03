@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createPoetry } from "../../../store/thunk/PoetryThunk";
 import Swal from "sweetalert2";
+import { checkCoauthor } from "../../../store/thunk/CoauthorThunk";
 
 export default function ContributorCreatePoetry() {
 
@@ -26,12 +27,30 @@ export default function ContributorCreatePoetry() {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
+  const handleAddCoAuthor = async () => {
+    if (!coauthorInput.trim()) return;
 
-  // Handle adding a co-author (The "Find" button)
-  const handleAddCoAuthor = () => {
-    if (coauthorInput.trim() && !coauthorPublicIds.includes(coauthorInput)) {
-      setCoauthorPublicIds([...coauthorPublicIds, coauthorInput]);
-      setCoauthorInput(""); // Clear input after adding
+    // prevent duplicate
+    if (coauthorPublicIds.includes(coauthorInput)) {
+      Swal.fire({
+        icon: "warning",
+        title: "Already added",
+        text: "This co-author is already in the list",
+      });
+      return;
+    }
+
+    const result = await dispatch(checkCoauthor(coauthorInput)).unwrap();
+
+    if (result.status === "public_id_found") {
+      setCoauthorPublicIds((prev) => [...prev, coauthorInput]);
+      setCoauthorInput("");
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Author not found",
+        text: "The author public ID does not exist",
+      });
     }
   };
 

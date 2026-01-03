@@ -19,7 +19,7 @@ const userSlices = createSlice({
                 state.loading = true;
                 state.error = null;
             })
-            .addCase(updateAuthorProfile.rejected, (state, action) => {
+            .addCase(updateAuthorProfile.rejected, (state) => {
                 console.log("updateAuthorProfile rejected");
                 state.loading = false;
             })
@@ -41,23 +41,23 @@ const userSlices = createSlice({
                 }
             })
 
-        .addCase(getAuthorProfile.pending, (state) => {
+            .addCase(getAuthorProfile.pending, (state) => {
                 console.log("getAuthorProfile pending");
                 state.loading = true;
                 state.error = null;
             })
-        .addCase(getAuthorProfile.rejected, (state) => {
-            console.log("getAuthorProfile rejected");
-            state.loading = false;
-        })
-        .addCase(getAuthorProfile.fulfilled, (state, action) => {
-            console.log("getAuthorProfile fulfilled", action.payload);
-            state.loading = false;
-            state.userProfile = action.payload;
-        })
+            .addCase(getAuthorProfile.rejected, (state) => {
+                console.log("getAuthorProfile rejected");
+                state.loading = false;
+            })
+            .addCase(getAuthorProfile.fulfilled, (state, action) => {
+                console.log("getAuthorProfile fulfilled", action.payload);
+                state.loading = false;
+                state.userProfile = action.payload;
+            })
 
 
-}
+    }
 
 })
 

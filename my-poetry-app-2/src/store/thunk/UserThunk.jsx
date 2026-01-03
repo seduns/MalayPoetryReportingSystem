@@ -7,7 +7,7 @@ export const updateAuthorProfile = createAsyncThunk(
     async ({accountId, userData}, {rejectWithValue}) => {
         try {
             const token = localStorage.getItem("accessToken");
-            const response = await axios.post(`${BASEURL}author/${accountId}/profile`, userData, {
+            const response = await axios.put(`${BASEURL}/author/${accountId}/profile`, userData, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -24,7 +24,7 @@ export const getAuthorProfile = createAsyncThunk(
     async ({accountId}, {rejectWithValue}) => {
         try {
             const token = localStorage.getItem("accessToken");
-            const response = await axios.get(`${BASEURL}author/${accountId}/profile`, {
+            const response = await axios.get(`${BASEURL}/author/${accountId}/profile`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }

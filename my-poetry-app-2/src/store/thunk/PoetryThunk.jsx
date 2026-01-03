@@ -38,6 +38,24 @@ export const getPoetryList = createAsyncThunk(
     }
 );
 
+export const getPoetryByAuthorId = createAsyncThunk(
+    "poetry/authorlist",
+    async (authorId, { rejectWithValue }) => {
+        try {
+            const token = localStorage.getItem("accessToken");
+            const response = await axios.get(`${BASEURL}/poetry/author/${authorId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || { message: "Unknown error" });
+        }
+    }
+);
+
 export const getPoetry = createAsyncThunk(
     "poetry/get",
     async (poetryId, { rejectWithValue }) => {
