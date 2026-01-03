@@ -21,7 +21,6 @@ export default function Login() {
             password,
           };
 
-      
       console.log("Data Auth", data)
 
       const result = await dispatch(loginUser(data));
@@ -34,11 +33,12 @@ export default function Login() {
         alert("Login Successful!");
         console.log("Account details:", payload);
         localStorage.setItem("accessToken", payload.accessToken);
+        localStorage.setItem("accountId", payload.accountId);
 
         if(payload.role === "USER_AUTHOR") {
           navigate("/contributor/dashboard")
         } else if(payload.role === "USER_PUBLIC") {
-          navigate("")
+          navigate("/poetry-discovery")
         }
 
         // navigate("/admin/dashboard");

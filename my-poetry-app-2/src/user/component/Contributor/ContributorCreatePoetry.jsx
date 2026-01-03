@@ -1,16 +1,14 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createPoetry } from "../../../store/thunk/PoetryThunk";
-import Swal from "sweetalert2";
 import { checkCoauthor } from "../../../store/thunk/CoauthorThunk";
+import Swal from "sweetalert2";
 
 export default function ContributorCreatePoetry() {
-
   const dispatch = useDispatch();
-  const { accountId } = useSelector((state) => state.auth)
-  const { poetryData } = useSelector((state) => state.poetry)
+  const accountId = localStorage.getItem("accountId");
 
-  // 1. Setup state for form fields
+  // Form fields state
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -18,20 +16,22 @@ export default function ContributorCreatePoetry() {
     content: "",
   });
 
-  // State for co-author logic
+  // Co-author logic
   const [coauthorInput, setCoauthorInput] = useState("");
-  const [coauthorPublicIds, setCoauthorPublicIds] = useState([]);
+  const [coauthors, setCoauthors] = useState([]); // { publicId, fullName }
 
-  // Handle text/select changes
+  // Handle form field changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
-  const handleAddCoAuthor = async () => {
+
+  // Add co-author by public ID
+  const handleAddCoauthor = async () => {
     if (!coauthorInput.trim()) return;
 
-    // prevent duplicate
-    if (coauthorPublicIds.includes(coauthorInput)) {
+    // Prevent duplicate
+    if (coauthors.some((co) => co.publicId === coauthorInput)) {
       Swal.fire({
         icon: "warning",
         title: "Already added",
@@ -40,12 +40,12 @@ export default function ContributorCreatePoetry() {
       return;
     }
 
-    const result = await dispatch(checkCoauthor(coauthorInput)).unwrap();
-
-    if (result.status === "public_id_found") {
-      setCoauthorPublicIds((prev) => [...prev, coauthorInput]);
+    try {
+      const result = await dispatch(checkCoauthor(coauthorInput)).unwrap();
+      // Result example: { id: 6, publicId: "1420", fullName: "Muhd NAIM Ahmad" }
+      setCoauthors((prev) => [...prev, { publicId: result.publicId, fullName: result.fullName }]);
       setCoauthorInput("");
-    } else {
+    } catch (error) {
       Swal.fire({
         icon: "error",
         title: "Author not found",
@@ -54,26 +54,26 @@ export default function ContributorCreatePoetry() {
     }
   };
 
+  // Remove co-author
+  const handleRemoveCoauthor = (publicId) => {
+    setCoauthors((prev) => prev.filter((co) => co.publicId !== publicId));
+  };
+
+  // Submit poetry
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Prepare the data
     const data = {
       title: formData.title,
       content: formData.content,
       description: formData.description,
       category: formData.category.toUpperCase(),
-      coauthorPublicIds: coauthorPublicIds,
+      coauthorPublicIds: coauthors.map((co) => co.publicId),
     };
 
-    console.log("show data", data);
-    console.log("accountId", accountId);
-
     try {
-      // Dispatch the createPoetry thunk
       const resultAction = await dispatch(createPoetry({ poetryData: data, accountId }));
 
-      // Show success or error based on the result
       if (createPoetry.fulfilled.match(resultAction)) {
         Swal.fire({
           icon: "success",
@@ -82,6 +82,9 @@ export default function ContributorCreatePoetry() {
           confirmButtonColor: "#FF5C5C",
           timer: 3000,
         });
+        // Reset form
+        setFormData({ title: "", description: "", category: "Select Category", content: "" });
+        setCoauthors([]);
       } else {
         Swal.fire({
           icon: "error",
@@ -103,7 +106,7 @@ export default function ContributorCreatePoetry() {
 
   return (
     <div className="flex flex-col h-full animate-fadeIn overflow-hidden">
-      {/* Header Section */}
+      {/* Header */}
       <div className="mb-6 px-4">
         <h1 className="text-4xl font-bold tracking-tight">
           Create <span className="text-[#DC2A54]">Poetry</span>
@@ -113,11 +116,10 @@ export default function ContributorCreatePoetry() {
         </p>
       </div>
 
-      {/* Form Container */}
+      {/* Form */}
       <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
         <div className="flex gap-6 flex-1 overflow-hidden px-4">
-
-          {/* Left Column: Poetry Details */}
+          {/* Left Column */}
           <div className="flex-1 bg-white border border-black/20 rounded-[30px] shadow-sm p-8 space-y-6 overflow-y-auto">
             <div className="space-y-2">
               <label className="text-gray-500 font-bold text-xs uppercase ml-1">Poetry Title</label>
@@ -161,6 +163,7 @@ export default function ContributorCreatePoetry() {
               </select>
             </div>
 
+            {/* Co-Author Section */}
             <div className="space-y-2">
               <label className="text-gray-500 font-bold text-xs uppercase ml-1">Co-Author</label>
               <div className="flex gap-2">
@@ -168,27 +171,40 @@ export default function ContributorCreatePoetry() {
                   type="text"
                   value={coauthorInput}
                   onChange={(e) => setCoauthorInput(e.target.value)}
-                  placeholder="Enter author code"
+                  placeholder="Enter author public ID"
                   className="flex-1 bg-[#F3F6F9] border-none rounded-xl px-4 py-3 text-sm outline-none"
                 />
                 <button
                   type="button"
-                  onClick={handleAddCoAuthor}
+                  onClick={handleAddCoauthor}
                   className="bg-[#FF5C5C] text-white px-6 py-2 rounded-xl text-xs font-bold hover:bg-[#eb4b4b] transition-all"
                 >
                   Find
                 </button>
               </div>
-              {/* Visual feedback for added IDs */}
+
+              {/* Preview Added Co-Authors */}
               <div className="flex flex-wrap gap-2 mt-2">
-                {coauthorPublicIds.map(id => (
-                  <span key={id} className="bg-gray-100 text-[10px] px-2 py-1 rounded-md font-mono">#{id}</span>
+                {coauthors.map((co) => (
+                  <div
+                    key={co.publicId}
+                    className="bg-gray-100 text-gray-800 rounded-xl px-4 py-2 flex items-center gap-2 text-sm"
+                  >
+                    {co.fullName}
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveCoauthor(co.publicId)}
+                      className="text-red-500 font-bold hover:text-red-700"
+                    >
+                      ×
+                    </button>
+                  </div>
                 ))}
               </div>
             </div>
           </div>
 
-          {/* Right Column: Poetry Content Editor */}
+          {/* Right Column: Content */}
           <div className="flex-1 bg-white border border-black/20 rounded-[30px] shadow-sm p-8 flex flex-col">
             <label className="text-gray-500 font-bold text-xs uppercase ml-1 mb-4">Poetry Content</label>
             <textarea
@@ -201,7 +217,7 @@ export default function ContributorCreatePoetry() {
           </div>
         </div>
 
-        {/* Bottom Action Button */}
+        {/* Submit */}
         <div className="flex justify-center py-6">
           <button
             type="submit"
