@@ -6,25 +6,28 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllAnalytics } from "../../store/thunk/AnalyticsThunk";
 import { setPoetryAnalyticsData } from "../../store/slice/AnalyticsSlice";
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import IconButton from "@mui/material/IconButton";
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+
 
 const PoetryCard = ({ poetry }) => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const accountId = localStorage.getItem("accountId");
-  
+
+  // The only navigation logic remains on the main button
   const handleReadClick = () => {
     if (accountId) {
-      // dispatch(setPoetryAnalyticsData(poetry.id));
-      navigate("/poetry-detail")
-      console.log("Read poetry:", poetry.id);
+      navigate("/poetry-detail");
     } else {
-      console.log("No accountId, redirect to login");
+      navigate("/login");
     }
   };
 
   return (
     <div className="px-2">
-      <div className="bg-white p-6 rounded-xl shadow-md border border-black/20 flex flex-col h-80 text-left">
+      <div className="bg-white p-6 rounded-xl shadow-md border border-black/20 flex flex-col h-80 text-left hover:shadow-lg transition-shadow">
         <h3 className="text-2xl font-bold text-orange-500 mb-4 leading-tight">
           {poetry.poetry.title}
         </h3>
@@ -35,14 +38,28 @@ const PoetryCard = ({ poetry }) => {
             : poetry.poetry.content}
         </p>
 
-        <div className="flex items-center text-gray-400 text-xs gap-4 mb-4">
-          <span>👁️ {poetry.viewCount}</span>
-          <span>👍 {poetry.likeCount}</span>
+        {/* Static Analytics Display */}
+        <div className="flex items-center gap-6 mb-6">
+          {/* Views - Always Red */}
+          <div className="flex items-center gap-2">
+            <VisibilityIcon sx={{ fontSize: 22, color: "#DC2A54" }} />
+            <span className="text-[#DC2A54] font-bold text-sm">
+              {poetry.viewCount}
+            </span>
+          </div>
+
+          {/* Likes - Always Red and Filled */}
+          <div className="flex items-center gap-2">
+            <FavoriteIcon sx={{ fontSize: 22, color: "#DC2A54" }} />
+            <span className="text-[#DC2A54] font-bold text-sm">
+              {poetry.likeCount}
+            </span>
+          </div>
         </div>
 
         <button
           onClick={handleReadClick}
-          className="bg-orange-500 text-white py-2 px-4 rounded-lg font-semibold text-sm w-max hover:bg-orange-600 transition"
+          className="bg-orange-500 text-white py-2.5 px-6 rounded-lg font-bold text-sm w-max hover:bg-orange-600 transition shadow-sm active:scale-95"
         >
           Read poetry
         </button>
