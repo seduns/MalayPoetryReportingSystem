@@ -39,6 +39,8 @@ export default function Login() {
           navigate("/contributor/dashboard")
         } else if(payload.role === "USER_PUBLIC") {
           navigate("/poetry-discovery")
+        } else {
+          navigate("/admin/dashboard")
         }
 
         // navigate("/admin/dashboard");

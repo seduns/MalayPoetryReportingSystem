@@ -18,3 +18,60 @@ export const getAllAnalytics = createAsyncThunk(
         }
     }
 );
+
+export const addView = createAsyncThunk(
+    "analytics/addView",
+    async (analyticsId, { rejectWithValue }) => {
+        try {
+            const token = localStorage.getItem("accessToken");
+
+            const response = await axios.patch(
+                `${BASEURL}/poetry/analytics/${analyticsId}/view`,
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            return {
+
+                analyticsId,
+                data: response.data,
+            };
+        } catch (error) {
+            return rejectWithValue(
+                error.response?.data || { message: "Failed to add view" }
+            );
+        }
+    }
+);
+
+export const addLike = createAsyncThunk(
+    "analytics/addLike",
+    async (analyticsId, { rejectWithValue }) => {
+        try {
+            const token = localStorage.getItem("accessToken");
+
+            const response = await axios.patch(
+                `${BASEURL}/poetry/analytics/${analyticsId}/like`,
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            return {
+                analyticsId,
+                data: response.data,
+            };
+        } catch (error) {
+            return rejectWithValue(
+                error.response?.data || { message: "Failed to add like" }
+            );
+        }
+    }
+);
