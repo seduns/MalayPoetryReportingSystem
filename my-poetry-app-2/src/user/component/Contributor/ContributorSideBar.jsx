@@ -11,6 +11,7 @@ import ListAltOutlinedIcon from '@mui/icons-material/ListAltOutlined';
 import layersOutlinedIcon from '@mui/icons-material/LayersOutlined';
 import PeopleOutlineOutlinedIcon from '@mui/icons-material/PeopleOutlineOutlined';
 import EditIcon from '@mui/icons-material/Edit';
+import BarChartIcon from '@mui/icons-material/BarChart';
 
 export default function ContributorSideBar() {
     const navigate = useNavigate();
@@ -22,7 +23,7 @@ export default function ContributorSideBar() {
     const menuItems = [
         { icon: DashboardOutlinedIcon, label: "Dashboard", path: "/contributor/dashboard" },
         { icon: InsertDriveFileOutlinedIcon, label: "Create Poetry", path: "/contributor/create-poetry" },
-        { icon: EditIcon, label: "Edit Poetry", path: "/contributor/edit-poetry" },
+        { icon: BarChartIcon, label: "Analysis Poetry", path: "/contributor/analysis-poetry" },
         { icon: PersonOutlineOutlinedIcon, label: "Contributor Profile", path: "/contributor/profile" },
         { icon: ListAltOutlinedIcon, label: "Manage Poetry", path: "/contributor/manage-poetry" },
         // { icon: layersOutlinedIcon, label: "Monitor Donation", path: "/contributor/donation" },

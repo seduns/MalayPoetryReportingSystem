@@ -1,6 +1,8 @@
 import React from "react";
 import HomeIcon from '@mui/icons-material/Home';
 import { Link } from "react-router-dom";
+import { IconButton } from "@mui/material";
+import GridViewIcon from '@mui/icons-material/GridView';
 
 
 export default function UserProfilePage() {
@@ -10,16 +12,36 @@ export default function UserProfilePage() {
       {/* Main Content Area */}
       <div className="flex-1 flex md:flex-row items-center justify-center gap-8 p-6  bg-white-100 overflow-y-auto " >
         
-      {/* Home Button */}
-      <Link to="/poetry-discovery" className="relative flex items-center group w-fit">
-        <button className="flex border border-black/20 h-12 w-12 items-center justify-center rounded-2xl bg-white group-hover:bg-[#fff5f7] transition-all duration-200 shadow-sm">
-          <HomeIcon sx={{ 
+     {/* Navigation Menu Container */}
+  <div className="flex flex-col justify-center"> {/* pt-20 matches your page padding to align with the poem */}
+    <div className="left-0 flex flex-col items-center bg-white border border-black/10 rounded-[28px] p-2 shadow-sm space-y-2">
+      
+      {/* Top Button: Discovery/Grid */}
+      <Link to="/poetry-discovery" className="group">
+        <button className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white hover:bg-[#fff5f7] transition-all duration-200">
+          <GridViewIcon sx={{ 
             fontSize: 24, 
             color: "#BDBDBD", 
-            '.group:hover &': { color: "#DC2A54" } // Changes icon color on button hover
+            '.group:hover &': { color: "#DC2A54", transform: 'scale(1.1)' } 
           }} />
         </button>
       </Link>
+
+      {/* Separator */}
+      <div className="w-8 border-t border-black/5 mx-auto" />
+
+      {/* Bottom Button: Home */}
+      <Link to="/" className="group">
+        <button className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white hover:bg-[#fff5f7] transition-all duration-200">
+          <HomeIcon sx={{ 
+            fontSize: 24, 
+            color: "#BDBDBD", 
+            '.group:hover &': { color: "#DC2A54", transform: 'scale(1.1)' } 
+          }} />
+        </button>
+      </Link>
+    </div>
+  </div>
 
         <div className="flex flex-col lg:flex-row items-start gap-16 ">
           
