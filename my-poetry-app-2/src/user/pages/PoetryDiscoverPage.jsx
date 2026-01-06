@@ -14,7 +14,34 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { setPoetryAnalyticsData } from "../../store/slice/AnalyticsSlice";
 import { viewCoauthor } from "../../store/thunk/CoauthorThunk";
 
-export default function PoetryDiscoveryPage() {
+// Sub-component to handle individual card likes
+const LikeButton = ({ initialLikes }) => {
+  const [isLiked, setIsLiked] = useState(false);
+  const [likesCount, setLikesCount] = useState(initialLikes);
+
+  const handleLikeToggle = (e) => {
+    e.stopPropagation(); // Prevents triggering card click if applicable
+    if (isLiked) {
+      setLikesCount(prev => prev - 1);
+    } else {
+      setLikesCount(prev => prev + 1);
+    }
+    setIsLiked(!isLiked);
+  };
+
+  return (
+    <div className="flex items-center gap-1">
+      <IconButton onClick={handleLikeToggle} size="small" sx={{ color: isLiked ? "#DC2A54" : "#BDBDBD", padding: '4px' }}>
+        {isLiked ? <FavoriteIcon sx={{ fontSize: 20 }} /> : <FavoriteBorderIcon sx={{ fontSize: 20 }} />}
+      </IconButton>
+      <span className={`text-xs font-bold ${isLiked ? "text-[#DC2A54]" : "text-gray-400"}`}>
+        {likesCount.toLocaleString()} Likes
+      </span>
+    </div>
+  );
+};
+
+export default function PoetryDiscoverPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate()
 

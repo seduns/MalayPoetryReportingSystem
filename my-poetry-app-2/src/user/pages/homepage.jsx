@@ -18,12 +18,13 @@ const PoetryCard = ({ poetry }) => {
 
   // The only navigation logic remains on the main button
   const handleReadClick = () => {
-    if (accountId) {
-      navigate("/poetry-detail");
-    } else {
-      navigate("/login");
-    }
-  };
+  if (accountId) {
+    // Navigate using the specific ID from the poetry object
+    navigate(`/poetry-detail/${poetry.poetry.id}`); 
+  } else {
+    navigate("/login");
+  }
+};
 
   return (
     <div className="px-2">
