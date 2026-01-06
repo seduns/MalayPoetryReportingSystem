@@ -19,6 +19,7 @@ export const getAllAnalytics = createAsyncThunk(
     }
 );
 
+
 export const addView = createAsyncThunk(
     "analytics/addView",
     async (analyticsId, { rejectWithValue }) => {

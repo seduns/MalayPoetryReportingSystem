@@ -1,450 +1,280 @@
 import React, { useEffect, useState } from "react";
-<<<<<<< HEAD
-import { Link } from "react-router-dom";
-import PersonIcon from "@mui/icons-material/Person";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllAnalytics } from "../../store/thunk/AnalyticsThunk";
-
-export default function PoetryDiscoverPage() {
-  const dispatch = useDispatch();
-
-  // Redux state
-  const { poetryAnalytics = [], loading } = useSelector(
-    (state) => state.analytics
-  );
-
-  // Pagination state
-=======
-import { useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
-import { getPoetryList } from "../../store/thunk/PoetryThunk";
-import { getAllAnalytics } from "../../store/thunk/AnalyticsThunk";
+import { Link, useNavigate } from "react-router-dom";
+import { getAllAnalytics, addView } from "../../store/thunk/AnalyticsThunk";
 import Swal from "sweetalert2";
 
 // MUI Icons
-import PersonIcon from '@mui/icons-material/Person';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import PersonIcon from "@mui/icons-material/Person";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import { setPoetryAnalyticsData } from "../../store/slice/AnalyticsSlice";
+import { viewCoauthor } from "../../store/thunk/CoauthorThunk";
 
 export default function PoetryDiscoveryPage() {
   const dispatch = useDispatch();
+  const navigate = useNavigate()
+
+  // 1. Get data directly from Redux
+  const { poetryAnalytics, loading } = useSelector((state) => state.analytics);
+
+  /* ---------------- STATE ---------------- */
+  // FIX: Removed [analyticsData, setAnalyticsData]. We use poetryAnalytics directly.
   
-  // 1. Data States
-  const [loading, setLoading] = useState(true);
-  const [analyticsData, setAnalyticsData] = useState([]); // Default to empty array
-  
-  // 2. Filter & Search States
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedGenres, setSelectedGenres] = useState([]);
   const [selectedYear, setSelectedYear] = useState("All Year");
 
-  // 3. UI States
->>>>>>> 08523790a6aa5f414fb62067d4ce2b7e37bd58cc
   const [currentPage, setCurrentPage] = useState(1);
   const [likedPoetry, setLikedPoetry] = useState(new Set());
+
   const itemsPerPage = 8;
 
-<<<<<<< HEAD
-  // Fetch analytics
+  /* ---------------- FETCH ---------------- */
   useEffect(() => {
+    // We must fetch data to populate the Redux store
     dispatch(getAllAnalytics());
   }, [dispatch]);
 
-  // Ensure array
-  const poetryList = Array.isArray(poetryAnalytics)
-    ? poetryAnalytics
-    : [];
-
-  // Pagination logic
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = poetryList.slice(
-    indexOfFirstItem,
-    indexOfLastItem
-  );
-  const totalPages = Math.ceil(poetryList.length / itemsPerPage);
-
-  const genres = ["ROMANTIC", "SAD", "LIFE", "MODERN"];
-=======
-  useEffect(() => {
-    fetchData();
-  }, [dispatch]);
-
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      const analyticsAction = await dispatch(getAllAnalytics());
-
-      if (getAllAnalytics.fulfilled.match(analyticsAction)) {
-        setAnalyticsData(analyticsAction.payload);
-      } else {
-        Swal.fire({
-          icon: "error",
-          title: "Fetch Error",
-          text: analyticsAction.payload?.message || "Failed to load analytics",
-        });
-      }
-    } catch (error) {
-      console.error("Discovery Error:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  /** ---------------- FILTER LOGIC ---------------- */
+  /* ---------------- FILTER ---------------- */
   const handleGenreChange = (genre) => {
-    setSelectedGenres(prev => 
-      prev.includes(genre) ? prev.filter(g => g !== genre) : [...prev, genre]
+    setSelectedGenres((prev) =>
+      prev.includes(genre)
+        ? prev.filter((g) => g !== genre)
+        : [...prev, genre]
     );
     setCurrentPage(1);
   };
 
-  // We filter the analyticsData because it contains the poetry object inside it
-  const filteredItems = analyticsData.filter((item) => {
+  // FIX: Filter directly on poetryAnalytics
+  const filteredItems = (poetryAnalytics || []).filter((item) => {
     const poem = item.poetry;
-    
-    const matchesSearch = !searchQuery || 
-      poem?.title?.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    const matchesGenre = selectedGenres.length === 0 || 
-      selectedGenres.some(selected => 
-        poem?.category?.toUpperCase() === selected.toUpperCase()
-      );
-    
-    const itemYear = poem?.dateCreated ? new Date(poem.dateCreated).getFullYear().toString() : "";
-    const matchesYear = selectedYear === "All Year" || itemYear === selectedYear;
+    if (!poem) return false;
 
-    return matchesSearch && matchesGenre && matchesYear;
+    // Search Logic
+    const matchSearch =
+      !searchQuery ||
+      poem.title?.toLowerCase().includes(searchQuery.toLowerCase());
+
+    // Genre Logic
+    const matchGenre =
+      selectedGenres.length === 0 ||
+      selectedGenres.includes(poem.category);
+
+    // Year Logic
+    const year = poem.dateCreated
+      ? new Date(poem.dateCreated).getFullYear().toString()
+      : "";
+
+    const matchYear = selectedYear === "All Year" || year === selectedYear;
+
+    return matchSearch && matchGenre && matchYear;
   });
 
-  /** ---------------- PAGINATION LOGIC ---------------- */
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredItems.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
-
-  const toggleLike = (id) => {
-    const newLikedSet = new Set(likedPoetry);
-    newLikedSet.has(id) ? newLikedSet.delete(id) : newLikedSet.add(id);
-    setLikedPoetry(newLikedSet);
+  /* ---------------- ACTIONS ---------------- */
+  const handleView = (id) => {
+    // This dispatches the action, which hits the API, then updates Redux
+    dispatch(addView(id));
+    dispatch(setPoetryAnalyticsData(id));
+    // dispatch(viewCoauthor(id));
+    navigate("/poetry-detail")
   };
 
-  if (loading) {
+  const toggleLike = (id) => {
+    const next = new Set(likedPoetry);
+    next.has(id) ? next.delete(id) : next.add(id);
+    setLikedPoetry(next);
+    // You should probably dispatch(addLike(id)) here too
+  };
+
+  /* ---------------- PAGINATION ---------------- */
+  const indexOfLast = currentPage * itemsPerPage;
+  const indexOfFirst = indexOfLast - itemsPerPage;
+  const currentItems = filteredItems.slice(indexOfFirst, indexOfLast);
+  const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
+
+  if (loading && poetryAnalytics.length === 0) {
     return (
       <div className="h-screen w-screen flex items-center justify-center bg-gray-50/30">
-        <p className="text-gray-400 font-medium animate-pulse">Loading Poetry Space...</p>
+        <p className="text-gray-400 animate-pulse">Loading Poetry Space...</p>
       </div>
     );
   }
->>>>>>> 08523790a6aa5f414fb62067d4ce2b7e37bd58cc
 
   return (
-    <div className="p-10 min-h-screen w-screen flex flex-col font-sans bg-gray-50/30">
-      
-<<<<<<< HEAD
-      {/* Profile Button */}
-      <Link
-        to="/user-profile"
-        className="fixed left-6 top-8 z-50 flex items-center group w-fit"
-      >
-        <button className="flex border border-black/20 h-12 w-12 items-center justify-center rounded-2xl bg-white group-hover:bg-[#fff5f7] transition-all duration-200 shadow-sm">
-          <PersonIcon
-            sx={{
-              fontSize: 24,
-              color: "#BDBDBD",
-              ".group:hover &": { color: "#DC2A54" }
-            }}
-          />
-        </button>
-        <span className="absolute left-14 scale-0 group-hover:scale-100 transition-all duration-200 origin-left bg-[#DC2A54] text-white text-[11px] font-semibold py-1.5 px-3 rounded-md whitespace-nowrap shadow-lg">
-          User Profile
-        </span>
-      </Link>
-=======
-      {/* Header */}
-      <div className="flex justify-end pr-5 mb-4">
-        <Link to="/user-profile" className="relative group">
-          <button className="flex border border-black/20 h-12 w-12 items-center justify-center rounded-2xl bg-white group-hover:bg-[#fff5f7] transition-all duration-200 shadow-sm">
-            <PersonIcon sx={{ fontSize: 24, color: "#BDBDBD", '.group:hover &': { color: "#DC2A54" } }} />
+    <div className="p-10 min-h-screen w-screen bg-gray-50/30">
+      {/* Profile */}
+      <div className="flex justify-end mb-6">
+        <Link to="/user-profile">
+          <button className="h-12 w-12 rounded-2xl bg-white border shadow-sm flex items-center justify-center hover:bg-gray-50 transition-colors">
+            <PersonIcon sx={{ color: "#BDBDBD" }} />
           </button>
         </Link>
       </div>
->>>>>>> 08523790a6aa5f414fb62067d4ce2b7e37bd58cc
 
-      {/* Header */}
-      <div className="mb-6 px-4">
-        <h1 className="text-4xl font-bold tracking-tight">
-          <span className="text-coral font-serif italic">The</span>{" "}
-          Poetry Space
-        </h1>
-      </div>
+      <h1 className="text-4xl font-bold mb-8 text-gray-800">
+        <span className="italic text-coral text-[#FF6F61]">The</span> Poetry Space
+      </h1>
 
-      <div className="flex gap-8 flex-1 overflow-hidden px-4 mb-4">
-<<<<<<< HEAD
-        
-=======
->>>>>>> 08523790a6aa5f414fb62067d4ce2b7e37bd58cc
+      <div className="flex flex-col lg:flex-row gap-8">
         {/* Sidebar */}
-        <aside className="w-64 bg-white border border-black/20 rounded-[30px] shadow-sm p-8 flex flex-col shrink-0">
-          <div className="mb-8 font-bold uppercase text-xs tracking-widest">
-            Search Filter
-          </div>
+        <aside className="w-full lg:w-64 bg-white rounded-[30px] border border-gray-100 shadow-sm p-8 h-fit">
+          <p className="font-bold text-xs uppercase mb-6 text-gray-400 tracking-wider">Search Filter</p>
 
-<<<<<<< HEAD
-          {/* Genre Filter (UI only for now) */}
           <div className="mb-8">
-            <p className="font-bold text-sm mb-4">Genre</p>
-            <div className="space-y-3">
-              {genres.map((genre) => (
-                <label key={genre} className="flex items-center gap-3">
-                  <input type="checkbox" />
-                  <span className="text-sm text-gray-400">
-                    {genre}
-                  </span>
-                </label>
-              ))}
-=======
-          <div className="space-y-8">
-            <div>
-              <p className="font-bold text-sm text-gray-800 mb-4">Genre</p>
-              <div className="space-y-3">
-                {["Romantic", "Modern", "Nature", "Spiritual"].map((genre) => (
-                  <label key={genre} className="flex items-center gap-3 cursor-pointer group">
-                    <input 
-                      type="checkbox" 
-                      checked={selectedGenres.includes(genre)}
-                      onChange={() => handleGenreChange(genre)}
-                      className="w-4 h-4 rounded border-black text-[#DC2A54] focus:ring-[#DC2A54]" 
-                    />
-                    <span className={`text-sm font-medium transition-colors ${selectedGenres.includes(genre) ? "text-[#DC2A54]" : "text-gray-400"}`}>
-                      {genre}
-                    </span>
-                  </label>
-                ))}
-              </div>
->>>>>>> 08523790a6aa5f414fb62067d4ce2b7e37bd58cc
-            </div>
+            <p className="font-bold text-sm mb-4 text-gray-700">Genre</p>
+            {["ROMANTIC", "MODERN", "LIFE", "SAD"].map((g) => (
+              <label key={g} className="flex gap-3 mb-3 cursor-pointer group">
+                <input
+                  type="checkbox"
+                  checked={selectedGenres.includes(g)}
+                  onChange={() => handleGenreChange(g)}
+                  className="accent-[#FF6F61] w-4 h-4 cursor-pointer"
+                />
+                <span className="text-sm text-gray-600 group-hover:text-[#FF6F61] transition-colors">{g}</span>
+              </label>
+            ))}
           </div>
 
-<<<<<<< HEAD
-          {/* Year Filter */}
           <div>
-            <p className="font-bold text-sm mb-4">Year</p>
-            <select className="w-full bg-gray-50 border border-black/20 rounded-xl px-4 py-3 text-sm">
+            <p className="font-bold text-sm mb-4 text-gray-700">Year</p>
+            <select
+              value={selectedYear}
+              onChange={(e) => {
+                setSelectedYear(e.target.value);
+                setCurrentPage(1);
+              }}
+              className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#FF6F61] bg-white"
+            >
               <option>All Year</option>
               <option>2026</option>
               <option>2025</option>
+              <option>2024</option>
             </select>
-=======
-            <div>
-              <p className="font-bold text-sm text-gray-800 mb-4">Year</p>
-              <div className="relative">
-                <select 
-                  value={selectedYear}
-                  onChange={(e) => { setSelectedYear(e.target.value); setCurrentPage(1); }}
-                  className="w-full bg-gray-50 border border-black/20 rounded-xl px-4 py-3 text-sm text-gray-500 outline-none appearance-none cursor-pointer"
-                >
-                  <option>All Year</option>
-                  <option>2026</option>
-                  <option>2025</option>
-                  <option>2024</option>
-                </select>
-                <span className="absolute right-4 top-1/2 -translate-y-1/2 material-icons text-gray-400 pointer-events-none text-sm">expand_more</span>
-              </div>
-            </div>
->>>>>>> 08523790a6aa5f414fb62067d4ce2b7e37bd58cc
           </div>
         </aside>
 
         {/* Main Content */}
-        <div className="flex-1 flex flex-col gap-8 overflow-hidden">
-<<<<<<< HEAD
-          
-          {/* Search */}
-          <div className="relative">
+        <div className="flex-1">
+          {/* Search Bar */}
+          <div className="relative mb-8">
             <input
-              type="text"
-              placeholder="Search Poetry"
-              className="w-full bg-white border border-black/20 rounded-2xl px-8 py-4 shadow-sm outline-none pr-16"
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setCurrentPage(1);
+              }}
+              placeholder="Search Poetry Title..."
+              className="w-full bg-white border border-gray-100 shadow-sm rounded-2xl px-8 py-4 pr-16 focus:outline-none focus:ring-2 focus:ring-[#FF6F61]/20 transition-all"
             />
-            <button className="absolute right-2 top-1/2 -translate-y-1/2 bg-coral text-white p-3 rounded-2xl">
-              <span className="material-icons">search</span>
+            <button className="absolute right-2 top-1/2 -translate-y-1/2 bg-[#FF6F61] text-white p-3 rounded-xl hover:bg-[#ff5a4a] transition-colors shadow-md shadow-[#FF6F61]/30">
+              <span className="material-icons text-sm font-bold">search</span>
             </button>
           </div>
 
           {/* Grid */}
-          <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
-            {loading && (
-              <p className="text-center text-gray-400 mt-20">
-                Loading poetry...
-              </p>
-            )}
-
-            {!loading && poetryList.length === 0 && (
-              <p className="text-center text-gray-400 mt-20">
-                No poetry found
-              </p>
-            )}
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+          {currentItems.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
               {currentItems.map((item) => {
-                const poetry = item.poetry;
-
+                const poem = item.poetry;
                 return (
                   <div
                     key={item.id}
-                    className="bg-white border border-black/20 rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all flex flex-col h-[320px]"
+                    className="bg-white border border-gray-100 rounded-2xl p-6 flex flex-col h-[340px] hover:shadow-lg transition-shadow duration-300 group"
                   >
-                    {/* Title */}
-                    <h3 className="text-coral text-3xl font-bold mb-2 line-clamp-2">
-                      {poetry.title}
+                    <div className="mb-2">
+                      <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide bg-gray-50 px-2 py-1 rounded-md">
+                        {poem.category}
+                      </span>
+                    </div>
+
+                    <h3 className="text-[#FF6F61] text-2xl font-bold line-clamp-2 mb-2 group-hover:underline decoration-2 underline-offset-4">
+                      {poem.title}
                     </h3>
 
-                    {/* Author */}
-                    <p className="text-[10px] text-gray-400 mb-3">
-                      by {poetry.author.user.fullName}
+                    <p className="text-xs text-gray-500 mb-4 italic">
+                      By {poem.author?.user?.fullName || "Unknown"}
                     </p>
 
-                    {/* Description */}
-                    <p className="text-black text-[12px] line-clamp-4 mb-6">
-                      {poetry.description || poetry.content}
+                    <p className="text-sm text-gray-600 line-clamp-4 mb-6 leading-relaxed flex-grow">
+                      {poem.description || poem.content}
                     </p>
 
-                    <div className="mt-auto">
-                      {/* Stats */}
-                      <div className="flex gap-4 text-[10px] font-bold mb-4">
-                        <span>
-                          <i className="material-icons text-xs">visibility</i>{" "}
-                          {item.viewCount}
+                    <div className="mt-auto border-t border-gray-50 pt-4">
+                      <div className="flex justify-between items-center mb-4">
+                        <span className="flex items-center gap-1 text-xs text-gray-400">
+                          <VisibilityIcon sx={{ fontSize: 16 }} />
+                          {/* This view count will now update automatically via Redux */}
+                          {item.viewCount || 0}
                         </span>
-                        <span>
-                          <i className="material-icons text-xs">thumb_up</i>{" "}
-                          {item.likeCount}
-                        </span>
+
+                        <button
+                          onClick={() => toggleLike(poem.id)}
+                          className="flex items-center gap-1 text-xs text-gray-400 hover:text-[#DC2A54] transition-colors"
+                        >
+                          {likedPoetry.has(poem.id) ? (
+                            <FavoriteIcon sx={{ color: "#DC2A54", fontSize: 20 }} />
+                          ) : (
+                            <FavoriteBorderIcon sx={{ fontSize: 20 }} />
+                          )}
+                          {item.likeCount || 0}
+                        </button>
                       </div>
 
-                      {/* Button */}
-                      <button className="w-full bg-coral text-white py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest">
-                        Read poetry
-                      </button>
+                      {/* FIX: Moved onClick to the Link wrapper or ensure button doesn't conflict.
+                          Ideally, handleView should be called, and navigation happens naturally via Link */}
+                        <button onClick={() => handleView(item.poetry.id)} className="w-full bg-[#FF6F61] hover:bg-[#ff5a4a] text-white py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider shadow-md shadow-[#FF6F61]/20 transition-all active:scale-95">
+                          Read Poetry
+                        </button>
                     </div>
                   </div>
                 );
               })}
             </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center mt-20 opacity-50">
+              <p className="text-6xl mb-4">📜</p>
+              <p className="text-gray-500 font-medium">No poetry found matching your criteria.</p>
+            </div>
+          )}
 
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="flex justify-center gap-2 mt-12 mb-10">
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex justify-center gap-2 mt-12">
+              <button
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage((p) => p - 1)}
+                className="w-10 h-10 rounded-xl border flex items-center justify-center disabled:opacity-30 hover:bg-gray-50"
+              >
+                <ChevronLeftIcon />
+              </button>
+
+              {[...Array(totalPages)].map((_, i) => (
                 <button
-                  onClick={() =>
-                    setCurrentPage((p) => Math.max(p - 1, 1))
-                  }
-                  disabled={currentPage === 1}
+                  key={i}
+                  onClick={() => setCurrentPage(i + 1)}
+                  className={`w-10 h-10 rounded-xl transition-all ${
+                    currentPage === i + 1
+                      ? "bg-[#FF6F61] text-white shadow-md shadow-[#FF6F61]/30 scale-110"
+                      : "border hover:bg-gray-50 text-gray-600"
+                  }`}
                 >
-                  ‹
+                  {i + 1}
                 </button>
+              ))}
 
-                {[...Array(totalPages)].map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setCurrentPage(i + 1)}
-                    className={`w-10 h-10 rounded-xl text-xs font-bold ${
-                      currentPage === i + 1
-                        ? "bg-coral text-white"
-                        : "bg-white border"
-                    }`}
-=======
-          <div className="relative group">
-            <input 
-              type="text" 
-              value={searchQuery}
-              onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
-              placeholder="Search Poetry Title" 
-              className="w-full bg-white border border-black/20 rounded-2xl px-8 py-4 shadow-sm outline-none transition-all pr-16 focus:border-[#DC2A54]" 
-            />
-            <button className="absolute right-2 top-1/2 -translate-y-1/2 bg-coral text-white p-3 rounded-2xl shadow-md">
-              <span className="material-icons block">search</span>
-            </button>
-          </div>
-
-          <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
-            {currentItems.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
-                {currentItems.map((item) => {
-                  const poem = item.poetry;
-                  return (
-                    <div key={item.id} className="bg-white border border-black/20 rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all flex flex-col group h-[320px]">
-                      <h3 className="text-coral text-3xl font-bold leading-tight mb-4 line-clamp-2">{poem?.title}</h3>
-                      <p className="text-black text-[12px] leading-relaxed line-clamp-4 mb-6">{poem?.content}</p>
-                      
-                      <div className="mt-auto">
-                        <div className="flex items-center gap-4 text-[10px] font-bold mb-4 text-gray-400">
-                          <div className="flex items-center gap-1">
-                            <VisibilityIcon sx={{ fontSize: 16, color: "#BDBDBD" }} />
-                            <span>{item.viewCount || 0}</span>
-                          </div>
-                          <div className="flex items-center gap-0">
-                            <button onClick={() => toggleLike(poem?.id)} className="p-1">
-                              {likedPoetry.has(poem?.id) ? <FavoriteIcon sx={{ fontSize: 18, color: "#DC2A54" }} /> : <FavoriteBorderIcon sx={{ fontSize: 18, color: "#BDBDBD" }} />}
-                            </button>
-                            <span className={likedPoetry.has(poem?.id) ? "text-[#DC2A54]" : ""}>{item.likeCount || 0}</span>
-                          </div>
-                        </div>
-                        <Link to={`/poetry/${poem?.id}`}>
-                          <button className="w-full bg-coral text-white py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:opacity-90 transition-opacity">
-                            Read poetry
-                          </button>
-                        </Link>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="h-64 flex flex-col items-center justify-center bg-white border border-dashed border-gray-300 rounded-[30px]">
-                <p className="text-gray-400 italic">No poetry matches your search or filters.</p>
-              </div>
-            )}
-
-            {/* Pagination Controls */}
-            {totalPages > 1 && (
-              <div className="flex justify-center items-center gap-2 mt-12 mb-10">
-                <button onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage === 1} className="p-2 rounded-xl border border-black/10 disabled:opacity-20 bg-white">
-                  <ChevronLeftIcon sx={{ fontSize: 20, color: "#DC2A54" }} />
-                </button>
-                {[...Array(totalPages)].map((_, i) => (
-                  <button 
-                    key={i} 
-                    onClick={() => setCurrentPage(i + 1)} 
-                    className={`w-10 h-10 rounded-xl font-bold text-xs transition-all ${currentPage === i + 1 ? "bg-coral text-white shadow-md" : "bg-white border border-black/10 text-gray-400 hover:border-coral"}`}
->>>>>>> 08523790a6aa5f414fb62067d4ce2b7e37bd58cc
-                  >
-                    {i + 1}
-                  </button>
-                ))}
-<<<<<<< HEAD
-
-                <button
-                  onClick={() =>
-                    setCurrentPage((p) =>
-                      Math.min(p + 1, totalPages)
-                    )
-                  }
-                  disabled={currentPage === totalPages}
-                >
-                  ›
-=======
-                <button onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages} className="p-2 rounded-xl border border-black/10 disabled:opacity-20 bg-white">
-                  <ChevronRightIcon sx={{ fontSize: 20, color: "#DC2A54" }} />
->>>>>>> 08523790a6aa5f414fb62067d4ce2b7e37bd58cc
-                </button>
-              </div>
-            )}
-          </div>
+              <button
+                disabled={currentPage === totalPages}
+                onClick={() => setCurrentPage((p) => p + 1)}
+                className="w-10 h-10 rounded-xl border flex items-center justify-center disabled:opacity-30 hover:bg-gray-50"
+              >
+                <ChevronRightIcon />
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

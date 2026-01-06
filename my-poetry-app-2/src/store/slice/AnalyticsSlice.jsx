@@ -12,87 +12,80 @@ const analyticSlices = createSlice({
     },
     reducers: {
         setPoetryAnalyticsData: (state, action) => {
-            const analyticsId = action.payload;
+            // The payload passed is the POETRY ID (e.g., 12)
+            const poetryId = action.payload;
 
             state.poetryAnalyticsData =
                 state.poetryAnalytics.find(
-                    (item) => item.id === analyticsId
+                    // FIX: Look at item.poetry.id, not item.id
+                    (item) => item.poetry.id === poetryId
                 ) || null;
         },
-
     },
     extraReducers(builder) {
         builder
             .addCase(getAllAnalytics.pending, (state) => {
-                console.log("getAllAnalytics pending");
                 state.loading = true;
                 state.error = null;
             })
             .addCase(getAllAnalytics.rejected, (state) => {
-                console.log("getAllAnalytics rejected");
                 state.loading = false;
             })
             .addCase(getAllAnalytics.fulfilled, (state, action) => {
-                console.log("getAllAnalytics fulfilled", action.payload);
                 state.loading = false;
                 state.poetryAnalytics = action.payload;
             })
 
             .addCase(addView.pending, (state) => {
                 console.log("addView pending");
-                state.addViewLoading = true;
                 state.error = null;
             })
             .addCase(addView.rejected, (state, action) => {
-                console.log("addView rejected");
-                state.addViewLoading = false;
+                console.log("addView rejected", action);
                 state.error = action.payload;
             })
             .addCase(addView.fulfilled, (state, action) => {
-                console.log("addView fulfilled");
-                state.addViewLoading = false;
+                console.log("success");
 
-                const updated = action.payload;
+                // Note: Although we call it 'analyticsId' here because of the thunk definition,
+                // effectively it is the POETRY ID (e.g., 12) that was passed from the component.
+                const { analyticsId: poetryId } = action.payload;
 
+                // 1. Update Main List
+                // FIX: Check item.poetry.id instead of item.id
                 const index = state.poetryAnalytics.findIndex(
-                    (item) => item.id === updated.id
+                    (item) => item.poetry.id === poetryId
                 );
 
                 if (index !== -1) {
-                    state.poetryAnalytics[index] = updated;
+                    state.poetryAnalytics[index].viewCount += 1;
+                }
+
+                // 2. Update Detail Page Data (if matches)
+                // FIX: Check state.poetryAnalyticsData.poetry.id
+                if (state.poetryAnalyticsData && state.poetryAnalyticsData.poetry.id === poetryId) {
+                    state.poetryAnalyticsData.viewCount += 1;
                 }
             })
 
             .addCase(addLike.pending, (state) => {
-                console.log("addLike pending");
-                state.addLikeLoading = true;
                 state.error = null;
             })
             .addCase(addLike.rejected, (state, action) => {
-                console.log("addLike rejected");
-                state.addLikeLoading = false;
                 state.error = action.payload;
             })
             .addCase(addLike.fulfilled, (state, action) => {
-                console.log("addLike fulfilled");
-                state.addLikeLoading = false;
-
-                const updated = action.payload;
-
+                console.log("success like");
+                const updated = action.payload; // Verify your addLike thunk structure!
                 const index = state.poetryAnalytics.findIndex(
                     (item) => item.id === updated.id
                 );
-
                 if (index !== -1) {
                     state.poetryAnalytics[index] = updated;
                 }
             })
-
     }
-
 })
 
 export const { setPoetryAnalyticsData } = analyticSlices.actions;
-
 export const analyticsReducer = analyticSlices.reducer;
-
