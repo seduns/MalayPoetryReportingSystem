@@ -1,4 +1,6 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
 // MUI Icons
 import SearchIcon from "@mui/icons-material/Search";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
@@ -7,54 +9,84 @@ import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import SortIcon from "@mui/icons-material/Sort";
 
+// Thunk
+import { getAllDonationsAdmin } from "../../../store/thunk/DonationThunk";
+
 export default function AdminManageDonation() {
-  const stats = [
-    { label: "Total Donations", value: "RM 12344", icon: <AccountBalanceWalletIcon className="text-[#DC2A54]" /> },
-    { label: "Donation Count", value: "344", icon: <BarChartIcon className="text-[#7B61FF]" /> },
-  ];
+  const dispatch = useDispatch();
+  
+  // 1. Get data from Redux
+  const { allDonations, loading } = useSelector((state) => state.donation);
 
-  const donationData = [
-    { title: "Whispers of the Night", author: "Amelia hance", count: 113, amount: 566 },
-    { title: "Between Silent Lines", author: "Danial rechardo", count: 33, amount: 211 },
-    { title: "Ink on My Heart", author: "Danial rechardo", count: 23, amount: 344 },
-    { title: "Between Silent Lines", author: "Amelia hance", count: 33, amount: 1100 },
-    { title: "Ink on My Heart", author: "Danial rechardo", count: 14, amount: 322 },
-    { title: "Between Silent Lines", author: "Amelia hance", count: 21, amount: 432 },
-    { title: "Between Silent Lines", author: "Danial rechardo", count: 33, amount: 211 },
-    { title: "Between Silent Lines", author: "Danial rechardo", count: 33, amount: 211 },
-    { title: "Between Silent Lines", author: "Danial rechardo", count: 33, amount: 211 },
-    { title: "Ink on My Heart", author: "Amelia hance", count: 66, amount: 455 },
-  ];
-
-  // State
+  // 2. Local State
   const [searchTerm, setSearchTerm] = useState("");
-  const [sortBy, setSortBy] = useState("default"); // 'default', 'count', 'amount'
+  const [sortBy, setSortBy] = useState("default");
   const [currentPage, setCurrentPage] = useState(0);
   const rowsPerPage = 8;
 
-  // ✅ Search & Sort Logic
-  const processedData = useMemo(() => {
-    let result = [...donationData];
+  // 3. Fetch data on mount
+  useEffect(() => {
+    dispatch(getAllDonationsAdmin());
+  }, [dispatch]);
 
-    // 1. Filter
-    const term = (searchTerm || "").toLowerCase();
-    result = result.filter(
-      (item) =>
-        item.title.toLowerCase().includes(term) ||
-        item.author.toLowerCase().includes(term)
+  // 4. Console Log Watcher (This will trigger when data actually arrives)\\
+
+
+  
+  useEffect(() => {
+    if (allDonations && allDonations.length > 0) {
+      console.log("Donation Data Received:", allDonations);
+    }
+  }, [allDonations]);
+
+  // 5. Ensure we are working with an array (Safety Check)
+  const donationList = Array.isArray(allDonations) ? allDonations : [];
+
+  // 6. Dynamic Stats Calculation
+  const stats = useMemo(() => {
+    const totalAmount = donationList.reduce(
+      (acc, curr) => acc + (Number(curr.donationAmount) || 0), 
+      0
     );
+    return [
+      { 
+        label: "Total Donations", 
+        value: `RM ${totalAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })}`, 
+        icon: <AccountBalanceWalletIcon className="text-[#DC2A54]" /> 
+      },
+      { 
+        label: "Donation Count", 
+        value: donationList.length.toString(), 
+        icon: <BarChartIcon className="text-[#7B61FF]" /> 
+      },
+    ];
+  }, [donationList]);
 
-    // 2. Sort (Highest to Lowest)
+  // 7. Search & Sort Logic
+  const processedData = useMemo(() => {
+    let result = [...donationList];
+
+    // Filter
+    const term = (searchTerm || "").toLowerCase();
+    if (term) {
+      result = result.filter(
+        (item) =>
+          (item.poetryTitle || "").toLowerCase().includes(term) ||
+          (item.poetryOwner || "").toLowerCase().includes(term)
+      );
+    }
+
+    // Sort
     if (sortBy === "count") {
-      result.sort((a, b) => b.count - a.count);
+      result.sort((a, b) => (b.donationCount || 0) - (a.donationCount || 0));
     } else if (sortBy === "amount") {
-      result.sort((a, b) => b.amount - a.amount);
+      result.sort((a, b) => (b.donationAmount || 0) - (a.donationAmount || 0));
     }
 
     return result;
-  }, [searchTerm, sortBy]);
+  }, [searchTerm, sortBy, donationList]);
 
-  // ✅ Pagination Logic
+  // 8. Pagination Logic
   const pageCount = Math.max(1, Math.ceil(processedData.length / rowsPerPage));
   const paginatedRows = processedData.slice(
     currentPage * rowsPerPage,
@@ -65,8 +97,8 @@ export default function AdminManageDonation() {
   const handlePrev = () => setCurrentPage((p) => Math.max(0, p - 1));
 
   return (
-    <div className="flex flex-col h-full animate-fadeIn p-4">
-      {/* Header Section */}
+    <div className="flex flex-col h-full animate-fadeIn p-4 bg-gray-50/30">
+      {/* Header */}
       <div className="mb-6 px-4">
         <h1 className="text-4xl font-bold tracking-tight">
           Monitor <span className="text-[#DC2A54]">Donation</span>
@@ -76,7 +108,7 @@ export default function AdminManageDonation() {
         </p>
       </div>
 
-      {/* Metric Cards */}
+      {/* Stats Cards */}
       <div className="grid grid-cols-2 gap-4 mb-6 px-4">
         {stats.map((stat, index) => (
           <div key={index} className="bg-white border border-black/10 rounded-[20px] p-5 shadow-sm flex items-center gap-4">
@@ -89,24 +121,22 @@ export default function AdminManageDonation() {
         ))}
       </div>
 
-      {/* Control Bar: Search, Sort & Pagination */}
+      {/* Controls */}
       <div className="flex flex-col lg:flex-row justify-between items-center px-4 mb-4 gap-4">
         <div className="flex flex-1 w-full gap-3">
-          {/* Search */}
           <div className="relative flex-1 md:max-w-xs">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
               <SearchIcon fontSize="small" />
             </div>
             <input
               type="text"
-              placeholder="Search..."
+              placeholder="Search by Title or Author..."
               className="w-full pl-10 pr-4 py-2 border border-black/10 rounded-xl focus:ring-2 focus:ring-[#7B61FF] focus:outline-none bg-white text-sm shadow-sm"
               value={searchTerm}
               onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(0); }}
             />
           </div>
 
-          {/* ✅ Sort Dropdown */}
           <div className="relative">
              <select 
               value={sortBy}
@@ -123,7 +153,6 @@ export default function AdminManageDonation() {
           </div>
         </div>
 
-        {/* Pagination */}
         <div className="flex items-center gap-3">
           <button onClick={handlePrev} disabled={currentPage === 0} className="p-1 rounded-lg border border-gray-200 bg-white disabled:opacity-30">
             <ChevronLeftIcon fontSize="small" />
@@ -135,12 +164,12 @@ export default function AdminManageDonation() {
         </div>
       </div>
 
-      {/* Table Container */}
+      {/* Table */}
       <div className="flex-1 bg-white border border-black/10 rounded-[25px] shadow-sm overflow-hidden flex flex-col mx-4 mb-4">
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>
-              <tr className="bg-[#F8F9FA] text-gray-500 text-[11px] uppercase tracking-widest sticky top-0 z-10 border-b border-gray-100">
+              <tr className="bg-[#E9ECEF] text-gray-500 text-[11px] uppercase tracking-widest sticky top-0 z-10 border-b border-gray-100">
                 <th className="py-3 px-8 text-center font-bold">Poetry</th>
                 <th className="py-3 px-4 text-center font-bold">Author</th>
                 <th className="py-3 px-4 text-center font-bold">Donation Count</th>
@@ -148,15 +177,19 @@ export default function AdminManageDonation() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {paginatedRows.length > 0 ? (
+              {loading ? (
+                 <tr><td colSpan="4" className="py-16 text-center text-gray-400 text-sm italic">Loading data...</td></tr>
+              ) : paginatedRows.length > 0 ? (
                 paginatedRows.map((item, index) => (
                   <tr key={index} className="hover:bg-blue-50/30 transition-colors">
-                    <td className="py-2.5 px-8 font-bold text-gray-800 text-xs text-center">{item.title}</td>
-                    <td className="py-2.5 px-4 font-medium text-gray-500 text-xs text-center">{item.author}</td>
+                    <td className="py-2.5 px-8 font-bold text-gray-800 text-xs text-center">{item.poetryTitle}</td>
+                    <td className="py-2.5 px-4 font-medium text-gray-500 text-xs text-center">{item.poetryOwner}</td>
                     <td className="py-2.5 px-4 font-bold text-gray-800 text-xs text-center">
-                      <span className="bg-gray-100 px-3 py-0.5 rounded-full">{item.count}</span>
+                      <span className="bg-gray-100 px-3 py-0.5 rounded-full">{item.donationCount}</span>
                     </td>
-                    <td className="py-2.5 px-8 font-bold text-[#DC2A54] text-xs text-center">RM {item.amount}</td>
+                    <td className="py-2.5 px-8 font-bold text-[#DC2A54] text-xs text-center">
+                        RM {(item.donationAmount || 0).toFixed(2)}
+                    </td>
                   </tr>
                 ))
               ) : (

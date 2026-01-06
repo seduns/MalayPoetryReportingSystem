@@ -22,14 +22,21 @@ export default function ContributorAnalysisPoetry() {
 
   const fetchData = async (accountId) => {
     try {
-      // Dispatching your Thunk with the contributor's ID
-      const resultAction = await dispatch(getAllAnalytics(accountId));
+      // Dispatching Thunk
+      const resultAction = await dispatch(getAllAnalytics());
 
       if (getAllAnalytics.fulfilled.match(resultAction)) {
         const payload = resultAction.payload;
 
-        // Map backend PoetryAnalytics entity to Recharts format
-        const formattedData = payload.map((item) => ({
+        // FILTER: Only keep poetry where the author ID matches the logged-in account ID
+        // Note: Check your console to see if the ID field is 'id', 'accountId', or 'user.id'
+        const myPoetryOnly = payload.filter((item) => 
+          String(item.poetry.author.id) === String(accountId) 
+          || String(item.poetry.author.user.id) === String(accountId)
+        );
+
+        // Map the FILTERED data to Recharts format
+        const formattedData = myPoetryOnly.map((item) => ({
           name: item.poetry.title,
           view: item.viewCount,
           like: item.likeCount,
@@ -38,7 +45,6 @@ export default function ContributorAnalysisPoetry() {
 
         setAnalyticsData(formattedData);
         
-        // Auto-select the first poetry in the list
         if (formattedData.length > 0) {
           setSelectedPoetry(formattedData[0]);
         }

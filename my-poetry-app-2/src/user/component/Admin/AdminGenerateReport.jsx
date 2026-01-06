@@ -99,7 +99,7 @@ export default function AdminGenerateReport() {
         <div className="overflow-y-auto">
           <table className="w-full border-collapse">
             <thead>
-              <tr className="bg-[#F8F9FA] text-gray-500 text-[11px] uppercase tracking-widest sticky top-0 z-10 border-b border-gray-100">
+              <tr className="bg-[#E9ECEF] text-gray-500 text-[11px] uppercase tracking-widest sticky top-0 z-10 border-b border-gray-100">
                 <th className="py-3 px-8 text-center font-bold">Poetry</th> {/* ✅ Centered */}
                 <th className="py-3 px-4 text-center font-bold">Author</th> {/* ✅ Centered */}
                 <th className="py-3 px-4 text-center font-bold">Full Report</th>
