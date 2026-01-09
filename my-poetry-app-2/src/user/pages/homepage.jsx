@@ -64,7 +64,7 @@ const PoetryCard = ({ poetry }) => {
   const handleReadClick = () => {
     console.log("wow", poetry.poetry.id)
     if (accountId) {
-      navigate(`/poetry-detail/${poetry.poetry.id}`); 
+      navigate(`/poetry-detail`); 
     } else {
       navigate("/login");
     }

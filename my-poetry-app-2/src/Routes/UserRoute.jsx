@@ -22,7 +22,7 @@ export default function UserRoute() {
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/poetry-discovery" element={<PoetryDiscoverPage />} />
-      <Route path="/poetry-detail/:id" element={<PoetryDetailPage />} />
+      <Route path="/poetry-detail" element={<PoetryDetailPage />} />
       <Route path="/donation" element={<DonationPage />} />
       <Route path="/user-profile" element={<UserProfilePage />} />
 
