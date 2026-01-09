@@ -118,7 +118,7 @@ export default function Homepage() {
 
   const handleDiscoverClick = () => {
     if (isLoggedIn) { 
-      navigate('/poetry-discovery');
+      navigate('/poetry-detail');
     } else { 
       navigate('/login');
     }

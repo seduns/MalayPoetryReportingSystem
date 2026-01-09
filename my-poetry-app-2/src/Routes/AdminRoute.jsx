@@ -23,7 +23,7 @@ export default function AdminRoute() {
                 <Route path="monitor-donation" element={<AdminManageDonation />} />
                 <Route path="register-users" element={<AdminRegister />} />
                 // Ensure the ID parameter is included!
-                <Route path="view-poetry/:id" element={<AdminViewPoetryReport />} />
+                <Route path="view-poetry/" element={<AdminViewPoetryReport />} />
             </Route>
         </Routes>
     );
