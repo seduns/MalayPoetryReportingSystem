@@ -62,8 +62,9 @@ const PoetryCard = ({ poetry }) => {
   const accountId = localStorage.getItem("accountId");
 
   const handleReadClick = () => {
+    console.log("wow", poetry.poetry.id)
     if (accountId) {
-      navigate(`/poetry-detail/${poetry.poetry.id}`); 
+      navigate(`/poetry-detail`); 
     } else {
       navigate("/login");
     }

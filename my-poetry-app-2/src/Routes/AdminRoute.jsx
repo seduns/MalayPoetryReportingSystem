@@ -5,9 +5,9 @@ import AdminGenerateReport from "../user/component/Admin/AdminGenerateReport";
 import AdminManageAuthor from "../user/component/Admin/AdminManageAuthor";
 import AdminManagePoetry from "../user/component/Admin/AdminManagePoetry";
 import AdminManageDonation from "../user/component/Admin/AdminManageDonation";
-import AdminRegister from "../user/component/Admin/AdminRegister";
 import AdminPoetryStatusManager from "../user/component/Admin/AdminPoetryStatusManager";
 import AdminViewPoetryReport from "../user/component/Admin/AdminViewPoetryReport";
+import AdminManageAdmin from "../user/component/Admin/AdminRegister";
 
 export default function AdminRoute() {
     return (
@@ -21,7 +21,7 @@ export default function AdminRoute() {
                 <Route path="manage-status" element={<AdminPoetryStatusManager />} />
                 <Route path="manage-poetry" element={<AdminManagePoetry />} />
                 <Route path="monitor-donation" element={<AdminManageDonation />} />
-                <Route path="register-users" element={<AdminRegister />} />
+                <Route path="register-users" element={<AdminManageAdmin />} />
                 // Ensure the ID parameter is included!
                 <Route path="view-poetry/" element={<AdminViewPoetryReport />} />
             </Route>
