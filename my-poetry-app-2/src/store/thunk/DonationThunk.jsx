@@ -20,10 +20,33 @@ export const getAuthorDonation = createAsyncThunk(
     }
 );
 
-<<<<<<< HEAD
+export const getAllDonationsAdmin = createAsyncThunk(
+    "donation/admin/all",
+    async (_, { rejectWithValue }) => {
+        try {
+            const token = localStorage.getItem("accessToken");
+
+            const response = await axios.get(
+                `${BASEURL}/donation/admin/all`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(
+                error.response?.data || { message: "Failed to fetch" }
+            );
+        }
+    }
+);
+
 export const getDonationByPoetryId = createAsyncThunk(
     "donation/poetry",
-    async (poetryId, {rejectWithValue}) => {
+    async (poetryId, { rejectWithValue }) => {
         try {
             const token = localStorage.getItem("accessToken");
             const response = await axios.get(`${BASEURL}/donation/poetry/${poetryId}`, {
@@ -76,21 +99,3 @@ export const makeDonation = createAsyncThunk(
     }
 );
 
-=======
-export const getAllDonationsAdmin = createAsyncThunk(
-  "donation/admin/all",
-  async (_, { rejectWithValue }) => {
-    try {
-      const token = localStorage.getItem("accessToken");
-      const response = await axios.get(`${BASEURL}/donation/admin/all`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      return response.data; // Assuming this returns the array of donations
-    } catch (error) {
-      return rejectWithValue(error.response?.data || { message: "Failed to fetch" });
-    }
-  }
-);
->>>>>>> ad3cf4307d5aa53c989538a6a0bdba28793bc45a
