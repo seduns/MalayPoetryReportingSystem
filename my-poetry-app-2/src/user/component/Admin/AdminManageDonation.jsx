@@ -96,7 +96,7 @@ export default function AdminManageDonation() {
   const handlePrev = () => setCurrentPage((p) => Math.max(0, p - 1));
 
   return (
-    <div className="flex flex-col h-full animate-fadeIn p-4 bg-gray-50/30 overflow-hidden">
+    <div className="flex flex-col h-full animate-fadeIn p-4 overflow-hidden">
       {/* Header */}
       <div className="mb-6 px-4">
         <h1 className="text-4xl font-bold tracking-tight">
@@ -173,7 +173,7 @@ export default function AdminManageDonation() {
               <th className="py-3 px-4 text-center font-bold">Donation Count</th>
               <th className="py-3 px-8 text-center font-bold">Donation Amount</th>
             </tr>
-          </thead>
+          </thead>  
           <tbody className="divide-y divide-gray-50">
             {loading ? (
                   <tr><td colSpan="4" className="py-16 text-center text-gray-400 text-sm italic animate-pulse">Loading data...</td></tr>
