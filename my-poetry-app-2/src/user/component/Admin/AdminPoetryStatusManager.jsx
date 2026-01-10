@@ -1,5 +1,7 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom"; // ✅ Import useNavigate
+
 // Actions
 import { getPoetryList, updatePoetryStatus } from "../../../store/thunk/PoetryThunk"; 
 
@@ -9,7 +11,7 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import SortIcon from "@mui/icons-material/Sort";
-import FilterListIcon from "@mui/icons-material/FilterList"; // ✅ Added Icon
+import FilterListIcon from "@mui/icons-material/FilterList";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 // Stat Icons
 import AutoStoriesIcon from "@mui/icons-material/AutoStories";
@@ -19,6 +21,7 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 export default function AdminPoetryStatusManager() {
   const dispatch = useDispatch();
+  const navigate = useNavigate(); // ✅ Initialize Navigation
 
   // Redux State
   const { poetryList, loading } = useSelector((state) => state.poetry);
@@ -26,7 +29,7 @@ export default function AdminPoetryStatusManager() {
   // Local State
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("All");
-  const [statusFilter, setStatusFilter] = useState("All"); // ✅ New Status Filter State
+  const [statusFilter, setStatusFilter] = useState("All");
   const [currentPage, setCurrentPage] = useState(0);
   const rowsPerPage = 10;
 
@@ -73,36 +76,32 @@ export default function AdminPoetryStatusManager() {
     dispatch(updatePoetryStatus({ poetryId, status: upperCaseStatus }));
   };
 
-  // ✅ Updated Filtering Logic
+  // Filtering Logic
   const filteredData = useMemo(() => {
     if (!poetryList) return [];
     
     let data = [...poetryList];
     const term = (searchTerm || "").toLowerCase();
 
-    // 1. Filter by Category
     if (categoryFilter !== "All") {
       data = data.filter(item => item.category === categoryFilter);
     }
 
-    // 2. Filter by Status (New)
     if (statusFilter !== "All") {
       data = data.filter(item => getSafeStatus(item) === statusFilter);
     }
 
-    // 3. Filter by Search
     return data.filter(item => {
       const title = item.title?.toLowerCase() || "";
       const authorName = item.author?.user?.fullName?.toLowerCase() || "";
       return title.includes(term) || authorName.includes(term);
     });
-  }, [searchTerm, categoryFilter, statusFilter, poetryList]); // Added statusFilter dependency
+  }, [searchTerm, categoryFilter, statusFilter, poetryList]);
 
   // Pagination
   const pageCount = Math.max(1, Math.ceil(filteredData.length / rowsPerPage));
   const paginatedRows = filteredData.slice(currentPage * rowsPerPage, currentPage * rowsPerPage + rowsPerPage);
   
-  // Extract Unique Categories
   const categories = useMemo(() => {
     if (!poetryList) return ["All"];
     const cats = new Set(poetryList.map(item => item.category).filter(Boolean));
@@ -164,7 +163,7 @@ export default function AdminPoetryStatusManager() {
             </select>
           </div>
 
-          {/* ✅ Status Filter (New) */}
+          {/* Status Filter */}
           <div className="relative">
             <FilterListIcon className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" sx={{ fontSize: 18 }} />
             <select 
@@ -214,7 +213,6 @@ export default function AdminPoetryStatusManager() {
               ) : paginatedRows.length > 0 ? (
                 paginatedRows.map((item, index) => {
                   
-                  // Use helper
                   const displayStatus = getSafeStatus(item);
 
                   return (
@@ -236,13 +234,16 @@ export default function AdminPoetryStatusManager() {
                         </span>
                       </td>
                       <td className="py-2.5 px-4 text-center">
-                        <button className="inline-flex items-center gap-1 bg-[#7B61FF] text-white px-4 py-1 rounded-full text-[9px] font-bold hover:shadow-md transition-all">
+                        {/* ✅ VIEW BUTTON - NAVIGATES TO DETAILS */}
+                        <button 
+                          onClick={() => navigate(`/admin/poetry-report/${item.id}`)}
+                          className="inline-flex items-center gap-1 bg-[#7B61FF] text-white px-4 py-1 rounded-full text-[9px] font-bold hover:shadow-md transition-all active:scale-95"
+                        >
                           <VisibilityIcon sx={{ fontSize: 11 }} /> View
                         </button>
                       </td>
                       <td className="py-2.5 px-4 text-center">
                         <div className="relative inline-block w-24 text-left">
-                          
                           <select 
                             value={displayStatus}
                             className={`appearance-none w-full pl-3 pr-6 py-1 rounded-full text-[9px] font-bold cursor-pointer outline-none shadow-sm ${getStatusStyle(displayStatus)}`}

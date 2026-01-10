@@ -1,55 +1,63 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { loginUser } from "../../../store/thunk/AuthThunk";
 import { useDispatch } from "react-redux";
+import Swal from "sweetalert2"; // ✅ Import SweetAlert2
+import { loginUser } from "../../../store/thunk/AuthThunk";
 
 export default function Login() {
-
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    try {
-        const data = {
-            email: email, // backend uses email as username
-            password,
-          };
 
-      console.log("Data Auth", data)
+    try {
+      const data = {
+        email: email,
+        password,
+      };
+
+      console.log("Data Auth", data);
 
       const result = await dispatch(loginUser(data));
       const payload = result.payload;
 
-      console.log("payload")
-      console.log("payload", payload)
+      console.log("payload", payload);
 
       if (payload?.status === "login_success") {
-        alert("Login Successful!");
+        // ✅ SUCCESS: No alert, just set storage and redirect
         console.log("Account details:", payload);
         localStorage.setItem("accessToken", payload.accessToken);
         localStorage.setItem("accountId", payload.accountId);
 
-        if(payload.role === "USER_AUTHOR") {
-          navigate("/contributor/dashboard")
-        } else if(payload.role === "USER_PUBLIC") {
-          navigate("/poetry-discovery")
+        if (payload.role === "USER_AUTHOR") {
+          navigate("/contributor/dashboard");
+        } else if (payload.role === "USER_PUBLIC") {
+          navigate("/poetry-discovery");
         } else {
-          navigate("/admin/dashboard")
+          navigate("/admin/dashboard");
         }
-
-        // navigate("/admin/dashboard");
       } else {
-        alert(payload?.message || "Login failed");
+        // ❌ FAILURE: Show SweetAlert
+        Swal.fire({
+          icon: "error",
+          title: "Login Failed",
+          text: "Invalid credentials. Please try again.",
+          confirmButtonColor: "#DC2A54", // Matches your Coral theme
+        });
       }
     } catch (error) {
       console.error("Login error:", error);
-      alert("An unexpected error occurred.");
+      // ❌ UNEXPECTED ERROR: Show SweetAlert
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "An unexpected error occurred. Please try again later.",
+        confirmButtonColor: "#DC2A54",
+      });
     }
   };
 

@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import Swal from "sweetalert2"; // ✅ Import SweetAlert2
+import Swal from "sweetalert2";
 
 // MUI Icons
 import SearchIcon from "@mui/icons-material/Search";
@@ -14,7 +14,6 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
 // Thunk & Actions
 import { getPoetryList, deletePoetry } from "../../../store/thunk/PoetryThunk";
-import { setSelectedPoetry } from "../../../store/slice/PoetrySlice";
 
 export default function AdminManageReport() {
   const dispatch = useDispatch();
@@ -33,27 +32,25 @@ export default function AdminManageReport() {
     dispatch(getPoetryList());
   }, [dispatch]);
 
-  // Navigation Handler
-  const handleView = (item) => {
-    dispatch(setSelectedPoetry({ id: item.id }));
-    navigate(`/admin/poetry-detail`);
+  // ✅ UPDATED: Navigation Handler
+  // Navigates to the details page passing the ID in the URL
+  const handleView = (id) => {
+    navigate(`/admin/poetry-report/${id}`);
   };
 
-  // ✅ UPDATED: Handle Delete with SweetAlert2
+  // Handle Delete with SweetAlert2
   const handleDelete = (id) => {
     Swal.fire({
       title: "Are you sure?",
       text: "You won't be able to revert this!",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#DC2A54", // Matches your theme color
+      confirmButtonColor: "#DC2A54",
       cancelButtonColor: "#b0b0b0",
       confirmButtonText: "Yes, delete it!",
     }).then((result) => {
       if (result.isConfirmed) {
-        // Dispatch the delete action
         dispatch(deletePoetry(id)).then((action) => {
-          // Check if the action was successful (fulfilled)
           if (deletePoetry.fulfilled.match(action)) {
             Swal.fire({
               title: "Deleted!",
@@ -61,10 +58,8 @@ export default function AdminManageReport() {
               icon: "success",
               confirmButtonColor: "#DC2A54",
             });
-            // Refresh the list
             dispatch(getPoetryList());
           } else {
-            // Handle failure
             Swal.fire({
               title: "Error!",
               text: action.payload || "Failed to delete poetry.",
@@ -215,12 +210,15 @@ export default function AdminManageReport() {
                     </span>
                   </td>
                   <td className="py-3 px-8 text-center flex justify-center gap-2">
+                    
+                    {/* ✅ UPDATED VIEW BUTTON */}
                     <button 
-                      onClick={() => handleView(item)}
+                      onClick={() => handleView(item.id)}
                       className="inline-flex items-center gap-1 bg-[#FFA500] hover:bg-[#FF8C00] text-white px-5 py-1 rounded-full text-[10px] font-bold transition-all shadow-sm"
                     >
                       <VisibilityIcon sx={{ fontSize: 14 }} /> View
                     </button>
+
                     <button onClick={() => handleDelete(item.id)} className="inline-flex items-center gap-1 bg-[#FF7F7F] hover:bg-[#ff6666] text-white px-4 py-1.5 rounded-full text-[10px] font-bold shadow-sm transition-all">
                       <DeleteIcon sx={{ fontSize: 14 }} /> Delete
                     </button>

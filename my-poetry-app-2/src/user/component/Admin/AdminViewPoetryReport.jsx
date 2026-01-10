@@ -99,13 +99,6 @@ export default function AdminViewPoetryReport() {
               <VisibilityIcon sx={{ fontSize: 18 }} />
               <span>Reference ID: {id}</span>
             </div>
-
-            <button 
-              className="w-full bg-[#DC2A54] hover:bg-[#b02243] text-white py-4 rounded-2xl font-bold text-sm shadow-lg shadow-red-100 transition-all active:scale-95"
-              onClick={() => window.print()}
-            >
-              Generate PDF Report
-            </button>
           </div>
 
           {/* Poetry Description Card */}
