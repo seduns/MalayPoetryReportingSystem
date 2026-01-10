@@ -153,7 +153,7 @@ export default function PoetryDiscoverPage() {
 
           <div className="mb-8">
             <p className="font-bold text-sm mb-4 text-gray-700">Genre</p>
-            {["ROMANTIC", "MODERN", "LIFE", "SAD"].map((g) => (
+            {["LIFE", "ROMANTIC", "SAD", "FRIENDSHIP", "NATURE", "MOTIVATION", "OTHER"].map((g) => (
               <label key={g} className="flex gap-3 mb-3 cursor-pointer group">
                 <input
                   type="checkbox"
@@ -180,6 +180,8 @@ export default function PoetryDiscoverPage() {
               <option>2026</option>
               <option>2025</option>
               <option>2024</option>
+              <option>2023</option>
+              <option>2022</option>
             </select>
           </div>
         </aside>

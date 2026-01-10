@@ -107,3 +107,26 @@ export const deletePoetry = createAsyncThunk(
         }
     }
 );
+
+export const updatePoetryStatus = createAsyncThunk(
+    "poetry/updateStatus",
+    async ({ poetryId, status }, { rejectWithValue }) => {
+        try {
+            const token = localStorage.getItem("accessToken");
+            
+            const response = await axios.put(`${BASEURL}/poetry/status/${poetryId}?status=${status}`, 
+                {}, 
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+            
+            return response.data || { id: poetryId, status: status }; 
+        } catch (err) {
+            return rejectWithValue(err.response?.data || { message: "Error updating status" });
+        }
+    }
+);
+

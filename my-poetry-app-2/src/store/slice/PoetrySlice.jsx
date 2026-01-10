@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { loginUser, registerUser } from "../thunk/AuthThunk";
-import { createPoetry, deletePoetry, getPoetry, getPoetryByAuthorId, getPoetryList, updatePoetry } from "../thunk/PoetryThunk";
+import { createPoetry, deletePoetry, getPoetry, getPoetryByAuthorId, getPoetryList, updatePoetry, updatePoetryStatus } from "../thunk/PoetryThunk";
 
 const poetrySlices = createSlice({
     name: "poetry",
@@ -111,6 +111,31 @@ const poetrySlices = createSlice({
                 console.log("getPoetryByAuthorId fulfilled", action.payload);
                 state.loading = false;
                 state.poetryList = action.payload
+            })
+
+            .addCase(updatePoetryStatus.pending, (state) => {
+                state.updateLoading = true;
+                state.error = null;
+            })
+            .addCase(updatePoetryStatus.fulfilled, (state, action) => {
+                state.updateLoading = false;
+
+                // ✅ KEY FIX: Handle the specific backend response structure
+                const { poetryId, newStatus } = action.payload;
+
+                if (state.poetryList) {
+                    // 1. Find the poetry item in the list
+                    const index = state.poetryList.findIndex((item) => item.id === poetryId);
+
+                    // 2. Update ONLY the status field if item exists
+                    if (index !== -1) {
+                        state.poetryList[index].status = newStatus;
+                    }
+                }
+            })
+            .addCase(updatePoetryStatus.rejected, (state, action) => {
+                state.updateLoading = false;
+                state.error = action.payload || "Failed to update status";
             })
 
     }

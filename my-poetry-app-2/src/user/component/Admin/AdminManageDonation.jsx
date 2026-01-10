@@ -29,40 +29,39 @@ export default function AdminManageDonation() {
     dispatch(getAllDonationsAdmin());
   }, [dispatch]);
 
-  // 4. Console Log Watcher (This will trigger when data actually arrives)\\
-
-
-  
-  useEffect(() => {
-    if (allDonations && allDonations.length > 0) {
-      console.log("Donation Data Received:", allDonations);
-    }
-  }, [allDonations]);
-
-  // 5. Ensure we are working with an array (Safety Check)
+  // 4. Ensure we are working with an array
   const donationList = Array.isArray(allDonations) ? allDonations : [];
 
-  // 6. Dynamic Stats Calculation
+  // 5. ✅ FIXED: Dynamic Stats Calculation
   const stats = useMemo(() => {
+    // Calculate Total Money (RM)
     const totalAmount = donationList.reduce(
       (acc, curr) => acc + (Number(curr.donationAmount) || 0), 
       0
     );
+
+    // ✅ FIXED: Calculate Total Count (Sum of all donationCount properties)
+    // Previously it was just counting the number of rows (donationList.length)
+    const totalCount = donationList.reduce(
+      (acc, curr) => acc + (Number(curr.donationCount) || 0), 
+      0
+    );
+
     return [
       { 
-        label: "Total Donations", 
+        label: "Total Donations Received", 
         value: `RM ${totalAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })}`, 
         icon: <AccountBalanceWalletIcon className="text-[#DC2A54]" /> 
       },
       { 
-        label: "Donation Count", 
-        value: donationList.length.toString(), 
+        label: "Total Transactions", 
+        value: totalCount.toLocaleString(), // Formats 1000 to 1,000
         icon: <BarChartIcon className="text-[#7B61FF]" /> 
       },
     ];
   }, [donationList]);
 
-  // 7. Search & Sort Logic
+  // 6. Search & Sort Logic
   const processedData = useMemo(() => {
     let result = [...donationList];
 
@@ -86,7 +85,7 @@ export default function AdminManageDonation() {
     return result;
   }, [searchTerm, sortBy, donationList]);
 
-  // 8. Pagination Logic
+  // 7. Pagination Logic
   const pageCount = Math.max(1, Math.ceil(processedData.length / rowsPerPage));
   const paginatedRows = processedData.slice(
     currentPage * rowsPerPage,
@@ -97,7 +96,7 @@ export default function AdminManageDonation() {
   const handlePrev = () => setCurrentPage((p) => Math.max(0, p - 1));
 
   return (
-    <div className="flex flex-col h-full animate-fadeIn p-4 bg-gray-50/30">
+    <div className="flex flex-col h-full animate-fadeIn p-4 bg-gray-50/30 overflow-hidden">
       {/* Header */}
       <div className="mb-6 px-4">
         <h1 className="text-4xl font-bold tracking-tight">
@@ -154,50 +153,48 @@ export default function AdminManageDonation() {
         </div>
 
         <div className="flex items-center gap-3">
-          <button onClick={handlePrev} disabled={currentPage === 0} className="p-1 rounded-lg border border-gray-200 bg-white disabled:opacity-30">
+          <button onClick={handlePrev} disabled={currentPage === 0} className="p-1 rounded-lg border border-gray-200 bg-white disabled:opacity-30 hover:bg-gray-50 transition-colors">
             <ChevronLeftIcon fontSize="small" />
           </button>
           <span className="text-xs font-bold text-gray-600">Page {currentPage + 1} of {pageCount}</span>
-          <button onClick={handleNext} disabled={currentPage >= pageCount - 1} className="p-1 rounded-lg border border-gray-200 bg-white disabled:opacity-30">
+          <button onClick={handleNext} disabled={currentPage >= pageCount - 1} className="p-1 rounded-lg border border-gray-200 bg-white disabled:opacity-30 hover:bg-gray-50 transition-colors">
             <ChevronRightIcon fontSize="small" />
           </button>
         </div>
       </div>
 
       {/* Table */}
-      <div className="flex-1 bg-white border border-black/10 rounded-[25px] shadow-sm overflow-hidden flex flex-col mx-4 mb-4">
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse">
-            <thead>
-              <tr className="bg-[#E9ECEF] text-gray-500 text-[11px] uppercase tracking-widest sticky top-0 z-10 border-b border-gray-100">
-                <th className="py-3 px-8 text-center font-bold">Poetry</th>
-                <th className="py-3 px-4 text-center font-bold">Author</th>
-                <th className="py-3 px-4 text-center font-bold">Donation Count</th>
-                <th className="py-3 px-8 text-center font-bold">Donation Amount</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-50">
-              {loading ? (
-                 <tr><td colSpan="4" className="py-16 text-center text-gray-400 text-sm italic">Loading data...</td></tr>
-              ) : paginatedRows.length > 0 ? (
-                paginatedRows.map((item, index) => (
-                  <tr key={index} className="hover:bg-blue-50/30 transition-colors">
-                    <td className="py-2.5 px-8 font-bold text-gray-800 text-xs text-center">{item.poetryTitle}</td>
-                    <td className="py-2.5 px-4 font-medium text-gray-500 text-xs text-center">{item.poetryOwner}</td>
-                    <td className="py-2.5 px-4 font-bold text-gray-800 text-xs text-center">
-                      <span className="bg-gray-100 px-3 py-0.5 rounded-full">{item.donationCount}</span>
-                    </td>
-                    <td className="py-2.5 px-8 font-bold text-[#DC2A54] text-xs text-center">
-                        RM {(item.donationAmount || 0).toFixed(2)}
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr><td colSpan="4" className="py-16 text-center text-gray-400 text-sm italic">No records found.</td></tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+      <div className="flex-1 bg-white border border-black/10 rounded-[25px] shadow-sm overflow-y-auto [&::-webkit-scrollbar]:hidden [scrollbar-width:none] flex flex-col mx-4 mb-4">
+        <table className="w-full border-collapse">
+          <thead className="sticky top-0 bg-white z-10 shadow-sm">
+            <tr className="bg-[#E9ECEF] text-gray-500 text-[11px] uppercase tracking-widest border-b border-gray-100">
+              <th className="py-3 px-8 text-center font-bold">Poetry</th>
+              <th className="py-3 px-4 text-center font-bold">Author</th>
+              <th className="py-3 px-4 text-center font-bold">Donation Count</th>
+              <th className="py-3 px-8 text-center font-bold">Donation Amount</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-50">
+            {loading ? (
+                  <tr><td colSpan="4" className="py-16 text-center text-gray-400 text-sm italic animate-pulse">Loading data...</td></tr>
+            ) : paginatedRows.length > 0 ? (
+              paginatedRows.map((item, index) => (
+                <tr key={index} className="hover:bg-blue-50/30 transition-colors">
+                  <td className="py-2.5 px-8 font-bold text-gray-800 text-xs text-center">{item.poetryTitle}</td>
+                  <td className="py-2.5 px-4 font-medium text-gray-500 text-xs text-center">{item.poetryOwner}</td>
+                  <td className="py-2.5 px-4 font-bold text-gray-800 text-xs text-center">
+                    <span className="bg-gray-100 px-3 py-0.5 rounded-full">{item.donationCount}</span>
+                  </td>
+                  <td className="py-2.5 px-8 font-bold text-[#DC2A54] text-xs text-center">
+                      RM {(item.donationAmount || 0).toFixed(2)}
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr><td colSpan="4" className="py-16 text-center text-gray-400 text-sm italic">No records found.</td></tr>
+            )}
+          </tbody>
+        </table>
       </div>
     </div>
   );

@@ -1,71 +1,37 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllAnalytics } from "../../store/thunk/AnalyticsThunk";
+// IMPORT YOUR ACTION HERE (Adjust path as needed)
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import { setPoetryAnalyticsData } from "../../store/slice/AnalyticsSlice";
 
-// 1. Dummy Data for Guest Users
-const dummyPoetry = [
-  { 
-    id: 'd1', 
-    viewCount: '12.4K', 
-    likeCount: '1.2K', 
-    poetry: { 
-      title: "The Silent Forest", 
-      content: "Deep in the woods where the sunlight barely touches the mossy ground, secrets are whispered by the ancient roots and carried by the wandering wind..." 
-    } 
-  },
-  { 
-    id: 'd2', 
-    viewCount: '8.9K', 
-    likeCount: '842', 
-    poetry: { 
-      title: "Ocean Echoes", 
-      content: "The rhythm of the tide is a song the sand has memorized for centuries, a salt-stained lullaby that pulls the moon closer to the shore..." 
-    } 
-  },
-  { 
-    id: 'd3', 
-    viewCount: '25.1K', // This is your "Viral" poem
-    likeCount: '4.7K', 
-    poetry: { 
-      title: "City Lights", 
-      content: "Concrete giants glow with a thousand electric eyes watching the night, where heartbeat-drums echo through neon alleys and iron veins..." 
-    } 
-  },
-  { 
-    id: 'd4', 
-    viewCount: '5.2K', 
-    likeCount: '310', 
-    poetry: { 
-      title: "Desert Wind", 
-      content: "A dance of dust and heat across the golden dunes of a forgotten land, where time is measured in grains of sand and the sun never asks for permission..." 
-    } 
-  },
-  { 
-    id: 'd5', 
-    viewCount: '15.7K', 
-    likeCount: '2.1K', 
-    poetry: { 
-      title: "Winter's Breath", 
-      content: "Silver frost clings to the window, painting patterns of ice in the dark, while the world holds its breath under a blanket of silent, falling stars..." 
-    } 
-  },
-];
-
-const PoetryCard = ({ poetry }) => {
+const PoetryCard = ({ item }) => {
   const navigate = useNavigate();
-  const accountId = localStorage.getItem("accountId");
+  const dispatch = useDispatch();
+
+  // 1. Data Logic: Handle both Flat (Initial) and Nested (API) structures
+  const poetryData = item.poetry || item; 
+  const viewCount = item.viewCount || 0;
+  const likeCount = item.likeCount || 0;
 
   const handleReadClick = () => {
-    console.log("wow", poetry.poetry.id)
-    if (accountId) {
+    const accessToken = localStorage.getItem("accessToken");
+    
+    if (accessToken) {
+      // 2. LOGGED IN: Dispatch Action -> Navigate
+      console.log("Dispatching Poetry ID:", poetryData.id);
+      
+      // Dispatch the ID so the reducer can find and set the data
+      dispatch(setPoetryAnalyticsData(poetryData.id));
+      
       navigate(`/poetry-detail`); 
     } else {
+      // 3. GUEST: Redirect to Login
       navigate("/login");
     }
   };
@@ -74,22 +40,25 @@ const PoetryCard = ({ poetry }) => {
     <div className="px-2">
       <div className="bg-white p-6 rounded-xl shadow-md border border-black/20 flex flex-col h-80 text-left hover:shadow-lg transition-all">
         <h3 className="text-2xl font-bold text-orange-500 mb-4 line-clamp-2">
-          {poetry.poetry.title}
+          {poetryData.title}
         </h3>
         <p className="text-gray-500 text-sm flex-grow line-clamp-4">
-          {poetry.poetry.content}
+          {poetryData.content}
         </p>
         <div className="flex items-center gap-6 mb-6">
           <div className="flex items-center gap-2">
             <VisibilityIcon sx={{ fontSize: 22, color: "#DC2A54" }} />
-            <span className="text-[#DC2A54] font-bold text-sm">{poetry.viewCount}</span>
+            <span className="text-[#DC2A54] font-bold text-sm">{viewCount}</span>
           </div>
           <div className="flex items-center gap-2">
             <FavoriteIcon sx={{ fontSize: 22, color: "#DC2A54" }} />
-            <span className="text-[#DC2A54] font-bold text-sm">{poetry.likeCount}</span>
+            <span className="text-[#DC2A54] font-bold text-sm">{likeCount}</span>
           </div>
         </div>
-        <button onClick={handleReadClick} className="bg-orange-500 text-white py-2 px-6 rounded-lg font-bold text-sm w-max hover:bg-orange-600 transition">
+        <button 
+          onClick={handleReadClick} 
+          className="bg-orange-500 text-white py-2 px-6 rounded-lg font-bold text-sm w-max hover:bg-orange-600 transition"
+        >
           Read poetry
         </button>
       </div>
@@ -100,26 +69,21 @@ const PoetryCard = ({ poetry }) => {
 export default function Homepage() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  // Select data from user slice
   const { poetryAnalytics } = useSelector((state) => state.analytics);
   
-  // Get items from storage
-  const accountId = localStorage.getItem("accountId");
-  const accessToken = localStorage.getItem("accessToken");
+  const isLoggedIn = !!(localStorage.getItem("accountId") && localStorage.getItem("accessToken"));
 
-  // Logical check for login status
-  const isLoggedIn = !!(accountId && accessToken);
-
-  // FIXED: Logic to remove keys using STRING names
   const handleLogout = () => {
     localStorage.removeItem("accountId");
     localStorage.removeItem("accessToken");
-    // Force reload to clear all states and redirect to login
     window.location.href = "/login";
   };
 
   const handleDiscoverClick = () => {
-    if (isLoggedIn) { 
-      navigate('/poetry-detail');
+    if (localStorage.getItem("accessToken")) { 
+      navigate('/poetry-discovery');
     } else { 
       navigate('/login');
     }
@@ -129,7 +93,7 @@ export default function Homepage() {
     dots: false,
     infinite: true,
     speed: 400,
-    slidesToShow: 4, // Adjusted for better card width
+    slidesToShow: 4,
     slidesToScroll: 1,
     autoplay: true,
     autoplaySpeed: 2000,
@@ -145,15 +109,15 @@ export default function Homepage() {
     }
   }, [dispatch, isLoggedIn]);
 
-  // Determine data: Top 5 from API if logged in, otherwise Dummy Data
-  const displayPoems = isLoggedIn && poetryAnalytics?.length > 0
-    ? [...poetryAnalytics].sort((a, b) => b.viewCount - a.viewCount).slice(0, 5)
-    : dummyPoetry;
+  const displayPoems = useMemo(() => {
+    if (!poetryAnalytics || poetryAnalytics.length === 0) return [];
+    return [...poetryAnalytics]; 
+  }, [poetryAnalytics]);
 
   return (
     <div className="min-h-screen w-screen flex flex-col font-sans overflow-x-hidden">
       
-      {/* Dynamic Header Button */}
+      {/* Header Buttons */}
       {isLoggedIn ? (
         <button 
           onClick={handleLogout} 
@@ -189,12 +153,15 @@ export default function Homepage() {
         </h2>
 
         <div className="mb-12">
-          {/* Spread the settings object correctly */}
-          <Slider {...settings}>
-            {displayPoems.map((poetry) => (
-              <PoetryCard key={poetry.id} poetry={poetry} />
-            ))}
-          </Slider>
+          {displayPoems.length > 0 ? (
+            <Slider {...settings}>
+              {displayPoems.map((item) => (
+                <PoetryCard key={item.id || Math.random()} item={item} />
+              ))}
+            </Slider>
+          ) : (
+            <p className="text-gray-400">Loading poetry...</p>
+          )}
         </div>
 
         <button 
