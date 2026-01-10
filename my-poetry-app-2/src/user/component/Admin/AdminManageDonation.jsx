@@ -29,20 +29,24 @@ export default function AdminManageDonation() {
     dispatch(getAllDonationsAdmin());
   }, [dispatch]);
 
-  // 4. Ensure we are working with an array
-  const donationList = Array.isArray(allDonations) ? allDonations : [];
+  // 4. ✅ FILTER: Ensure array and Keep ONLY Approved Poetry
+  // This serves as the source of truth for both Stats and the Table
+  const approvedDonations = useMemo(() => {
+    const list = Array.isArray(allDonations) ? allDonations : [];
+    // Filter by strict string match based on your JSON response
+    return list.filter((item) => item.Status === "APPROVED");
+  }, [allDonations]);
 
-  // 5. ✅ FIXED: Dynamic Stats Calculation
+  // 5. Stats Calculation (Using filtered data)
   const stats = useMemo(() => {
     // Calculate Total Money (RM)
-    const totalAmount = donationList.reduce(
+    const totalAmount = approvedDonations.reduce(
       (acc, curr) => acc + (Number(curr.donationAmount) || 0), 
       0
     );
 
-    // ✅ FIXED: Calculate Total Count (Sum of all donationCount properties)
-    // Previously it was just counting the number of rows (donationList.length)
-    const totalCount = donationList.reduce(
+    // Calculate Total Count (Sum of donationCount)
+    const totalCount = approvedDonations.reduce(
       (acc, curr) => acc + (Number(curr.donationCount) || 0), 
       0
     );
@@ -55,17 +59,17 @@ export default function AdminManageDonation() {
       },
       { 
         label: "Total Transactions", 
-        value: totalCount.toLocaleString(), // Formats 1000 to 1,000
+        value: totalCount.toLocaleString(), 
         icon: <BarChartIcon className="text-[#7B61FF]" /> 
       },
     ];
-  }, [donationList]);
+  }, [approvedDonations]);
 
-  // 6. Search & Sort Logic
+  // 6. Search & Sort Logic (Using filtered data)
   const processedData = useMemo(() => {
-    let result = [...donationList];
+    let result = [...approvedDonations];
 
-    // Filter
+    // Filter by Search Term
     const term = (searchTerm || "").toLowerCase();
     if (term) {
       result = result.filter(
@@ -75,7 +79,7 @@ export default function AdminManageDonation() {
       );
     }
 
-    // Sort
+    // Sort Logic
     if (sortBy === "count") {
       result.sort((a, b) => (b.donationCount || 0) - (a.donationCount || 0));
     } else if (sortBy === "amount") {
@@ -83,7 +87,7 @@ export default function AdminManageDonation() {
     }
 
     return result;
-  }, [searchTerm, sortBy, donationList]);
+  }, [searchTerm, sortBy, approvedDonations]);
 
   // 7. Pagination Logic
   const pageCount = Math.max(1, Math.ceil(processedData.length / rowsPerPage));
@@ -103,7 +107,7 @@ export default function AdminManageDonation() {
           Monitor <span className="text-[#DC2A54]">Donation</span>
         </h1>
         <p className="text-gray-400 mt-2 text-sm">
-          Overview of all donation transactions across poetry
+          Overview of donation transactions for <strong>Approved</strong> poetry
         </p>
       </div>
 
@@ -191,7 +195,7 @@ export default function AdminManageDonation() {
                 </tr>
               ))
             ) : (
-              <tr><td colSpan="4" className="py-16 text-center text-gray-400 text-sm italic">No records found.</td></tr>
+              <tr><td colSpan="4" className="py-16 text-center text-gray-400 text-sm italic">No approved donation records found.</td></tr>
             )}
           </tbody>
         </table>

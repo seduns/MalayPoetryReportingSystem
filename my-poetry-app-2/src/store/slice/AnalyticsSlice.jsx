@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { addLike, addView, getAllAnalytics } from "../thunk/AnalyticsThunk";
+import { addLike, addView, getAdminDashboard, getAllAnalytics, getAuthorDashboard } from "../thunk/AnalyticsThunk";
 
 const analyticSlices = createSlice({
     name: "user",
@@ -7,6 +7,7 @@ const analyticSlices = createSlice({
         loading: false,
         error: null,
         status: null,
+        dashboardData: null,
         poetryAnalytics: [
             {
         "id": 3,
@@ -601,357 +602,6 @@ const analyticSlices = createSlice({
             "bio": "Poetry is my soul12",
             "status": "STATUS_ACTIVE"
         }
-    },
-    {
-        "id": 36,
-        "title": "Yooo of the Night",
-        "content": "The moon speaks softly to the lonely stars...",
-        "description": "A reflective poem about solitude and hope.",
-        "category": "SAD",
-        "dateCreated": "2026-01-03T03:26:23.485396",
-        "status": {
-            "id": 1,
-            "name": "PENDING"
-        },
-        "author": {
-            "id": 13,
-            "publicId": "8539",
-            "user": {
-                "id": 13,
-                "fullName": "Muhamad syafiqqq",
-                "email": "nal@mail.com",
-                "username": "mail_111129",
-                "role": "USER_AUTHOR",
-                "createdAt": "2025-12-31T02:22:44.303682"
-            },
-            "currentDonationBalance": 140.0,
-            "bio": "Poetry is my soul12",
-            "status": "STATUS_ACTIVE"
-        }
-    },
-    {
-        "id": 37,
-        "title": "Yooo of the Night",
-        "content": "The moon speaks softly to the lonely stars...",
-        "description": "A reflective poem about solitude and hope.",
-        "category": "SAD",
-        "dateCreated": "2026-01-03T03:33:37.565119",
-        "status": {
-            "id": 1,
-            "name": "PENDING"
-        },
-        "author": {
-            "id": 13,
-            "publicId": "8539",
-            "user": {
-                "id": 13,
-                "fullName": "Muhamad syafiqqq",
-                "email": "nal@mail.com",
-                "username": "mail_111129",
-                "role": "USER_AUTHOR",
-                "createdAt": "2025-12-31T02:22:44.303682"
-            },
-            "currentDonationBalance": 140.0,
-            "bio": "Poetry is my soul12",
-            "status": "STATUS_ACTIVE"
-        }
-    },
-    {
-        "id": 38,
-        "title": "Yooo of the Night",
-        "content": "The moon speaks softly to the lonely stars...",
-        "description": "A reflective poem about solitude and hope.",
-        "category": "SAD",
-        "dateCreated": "2026-01-03T03:36:28.566462",
-        "status": {
-            "id": 1,
-            "name": "PENDING"
-        },
-        "author": {
-            "id": 13,
-            "publicId": "8539",
-            "user": {
-                "id": 13,
-                "fullName": "Muhamad syafiqqq",
-                "email": "nal@mail.com",
-                "username": "mail_111129",
-                "role": "USER_AUTHOR",
-                "createdAt": "2025-12-31T02:22:44.303682"
-            },
-            "currentDonationBalance": 140.0,
-            "bio": "Poetry is my soul12",
-            "status": "STATUS_ACTIVE"
-        }
-    },
-    {
-        "id": 39,
-        "title": "Yooo of the Night",
-        "content": "The moon speaks softly to the lonely stars...",
-        "description": "A reflective poem about solitude and hope.",
-        "category": "SAD",
-        "dateCreated": "2026-01-03T03:38:26.084718",
-        "status": {
-            "id": 1,
-            "name": "PENDING"
-        },
-        "author": {
-            "id": 13,
-            "publicId": "8539",
-            "user": {
-                "id": 13,
-                "fullName": "Muhamad syafiqqq",
-                "email": "nal@mail.com",
-                "username": "mail_111129",
-                "role": "USER_AUTHOR",
-                "createdAt": "2025-12-31T02:22:44.303682"
-            },
-            "currentDonationBalance": 140.0,
-            "bio": "Poetry is my soul12",
-            "status": "STATUS_ACTIVE"
-        }
-    },
-    {
-        "id": 40,
-        "title": "Yooo of the Night",
-        "content": "The moon speaks softly to the lonely stars...",
-        "description": "A reflective poem about solitude and hope.",
-        "category": "SAD",
-        "dateCreated": "2026-01-03T03:42:25.417021",
-        "status": {
-            "id": 1,
-            "name": "PENDING"
-        },
-        "author": {
-            "id": 13,
-            "publicId": "8539",
-            "user": {
-                "id": 13,
-                "fullName": "Muhamad syafiqqq",
-                "email": "nal@mail.com",
-                "username": "mail_111129",
-                "role": "USER_AUTHOR",
-                "createdAt": "2025-12-31T02:22:44.303682"
-            },
-            "currentDonationBalance": 140.0,
-            "bio": "Poetry is my soul12",
-            "status": "STATUS_ACTIVE"
-        }
-    },
-    {
-        "id": 42,
-        "title": "Malam tahun baru",
-        "content": "The moon speaks softly to the lonely stars...",
-        "description": "A reflective poem about solitude and hope.",
-        "category": "SAD",
-        "dateCreated": "2026-01-03T13:21:49.09899",
-        "status": {
-            "id": 1,
-            "name": "PENDING"
-        },
-        "author": {
-            "id": 13,
-            "publicId": "8539",
-            "user": {
-                "id": 13,
-                "fullName": "Muhamad syafiqqq",
-                "email": "nal@mail.com",
-                "username": "mail_111129",
-                "role": "USER_AUTHOR",
-                "createdAt": "2025-12-31T02:22:44.303682"
-            },
-            "currentDonationBalance": 140.0,
-            "bio": "Poetry is my soul12",
-            "status": "STATUS_ACTIVE"
-        }
-    },
-    {
-        "id": 43,
-        "title": "pagi3223",
-        "content": "qwqw\n\nqw\nqw\nq\nw\n\nqw\nqw",
-        "description": "apgi2323",
-        "category": "ROMANTIC",
-        "dateCreated": "2026-01-03T16:20:54.177382",
-        "status": {
-            "id": 1,
-            "name": "PENDING"
-        },
-        "author": {
-            "id": 13,
-            "publicId": "8539",
-            "user": {
-                "id": 13,
-                "fullName": "Muhamad syafiqqq",
-                "email": "nal@mail.com",
-                "username": "mail_111129",
-                "role": "USER_AUTHOR",
-                "createdAt": "2025-12-31T02:22:44.303682"
-            },
-            "currentDonationBalance": 140.0,
-            "bio": "Poetry is my soul12",
-            "status": "STATUS_ACTIVE"
-        }
-    },
-    {
-        "id": 45,
-        "title": "WOIIIIII",
-        "content": "wwwwwww",
-        "description": "test",
-        "category": "SAD",
-        "dateCreated": "2026-01-06T02:41:45.539682",
-        "status": {
-            "id": 1,
-            "name": "PENDING"
-        },
-        "author": {
-            "id": 21,
-            "publicId": "9336",
-            "user": {
-                "id": 21,
-                "fullName": "adan",
-                "email": "adan@gmail.com",
-                "username": "adan_4633",
-                "role": "USER_AUTHOR",
-                "createdAt": "2026-01-06T01:59:30.29506"
-            },
-            "currentDonationBalance": 0.0,
-            "bio": null,
-            "status": "STATUS_ACTIVE"
-        }
-    },
-    {
-        "id": 46,
-        "title": "Ada co author",
-        "content": "adsasd\nasddad a \nd d dasdasd as da das\nasdsad adsa\nadasd",
-        "description": "saya",
-        "category": "SAD",
-        "dateCreated": "2026-01-06T03:54:08.199323",
-        "status": {
-            "id": 1,
-            "name": "PENDING"
-        },
-        "author": {
-            "id": 25,
-            "publicId": "6634",
-            "user": {
-                "id": 25,
-                "fullName": "Muhd Faiszuddin Ahmad",
-                "email": "qq@example.com",
-                "username": "qq_qw_qw",
-                "role": "USER_AUTHOR",
-                "createdAt": "2026-01-06T03:53:15.873019"
-            },
-            "currentDonationBalance": 380.0,
-            "bio": "sayaa",
-            "status": "STATUS_ACTIVE"
-        }
-    },
-    {
-        "id": 47,
-        "title": "tiada co author",
-        "content": "asdsa\nsada asd\naasd asd\nacad adas\nd asdsa\nd adasdsadas sadasd\n asd",
-        "description": "dianadd",
-        "category": "SAD",
-        "dateCreated": "2026-01-06T03:54:37.337612",
-        "status": {
-            "id": 1,
-            "name": "PENDING"
-        },
-        "author": {
-            "id": 25,
-            "publicId": "6634",
-            "user": {
-                "id": 25,
-                "fullName": "Muhd Faiszuddin Ahmad",
-                "email": "qq@example.com",
-                "username": "qq_qw_qw",
-                "role": "USER_AUTHOR",
-                "createdAt": "2026-01-06T03:53:15.873019"
-            },
-            "currentDonationBalance": 380.0,
-            "bio": "sayaa",
-            "status": "STATUS_ACTIVE"
-        }
-    },
-    {
-        "id": 48,
-        "title": "Poetry 4",
-        "content": "No man is an island,\nEntire of itself,\nEvery man is a piece of the continent,\nA part of the main.\n",
-        "description": "Poetry 4",
-        "category": "FRIENDSHIP",
-        "dateCreated": "2026-01-06T18:09:35.776087",
-        "status": {
-            "id": 1,
-            "name": "PENDING"
-        },
-        "author": {
-            "id": 13,
-            "publicId": "8539",
-            "user": {
-                "id": 13,
-                "fullName": "Muhamad syafiqqq",
-                "email": "nal@mail.com",
-                "username": "mail_111129",
-                "role": "USER_AUTHOR",
-                "createdAt": "2025-12-31T02:22:44.303682"
-            },
-            "currentDonationBalance": 140.0,
-            "bio": "Poetry is my soul12",
-            "status": "STATUS_ACTIVE"
-        }
-    },
-    {
-        "id": 49,
-        "title": "Malam tahuun baru",
-        "content": "The moon speauks softly to the lonely stars...",
-        "description": "A reflectuive poem about solitude and hope.",
-        "category": "SAD",
-        "dateCreated": "2026-01-09T22:27:12.562135",
-        "status": {
-            "id": 1,
-            "name": "PENDING"
-        },
-        "author": {
-            "id": 13,
-            "publicId": "8539",
-            "user": {
-                "id": 13,
-                "fullName": "Muhamad syafiqqq",
-                "email": "nal@mail.com",
-                "username": "mail_111129",
-                "role": "USER_AUTHOR",
-                "createdAt": "2025-12-31T02:22:44.303682"
-            },
-            "currentDonationBalance": 140.0,
-            "bio": "Poetry is my soul12",
-            "status": "STATUS_ACTIVE"
-        }
-    },
-    {
-        "id": 50,
-        "title": "jangan gayy tau",
-        "content": "jangan gay please",
-        "description": "jangan gayy tau",
-        "category": "SAD",
-        "dateCreated": "2026-01-10T00:08:34.524228",
-        "status": {
-            "id": 1,
-            "name": "PENDING"
-        },
-        "author": {
-            "id": 25,
-            "publicId": "6634",
-            "user": {
-                "id": 25,
-                "fullName": "Muhd Faiszuddin Ahmad",
-                "email": "qq@example.com",
-                "username": "qq_qw_qw",
-                "role": "USER_AUTHOR",
-                "createdAt": "2026-01-06T03:53:15.873019"
-            },
-            "currentDonationBalance": 380.0,
-            "bio": "sayaa",
-            "status": "STATUS_ACTIVE"
-        }
     }
         ],
         poetryAnalyticsData: null
@@ -1030,6 +680,32 @@ const analyticSlices = createSlice({
                     state.poetryAnalytics[index] = updated;
                 }
             })
+
+            .addCase(getAdminDashboard.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(getAdminDashboard.fulfilled, (state, action) => {
+                state.loading = false;
+                state.dashboardData = action.payload; // ✅ Data saved here
+            })
+            .addCase(getAdminDashboard.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload || "Failed to fetch dashboard data";
+            })
+
+            .addCase(getAuthorDashboard.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(getAuthorDashboard.fulfilled, (state, action) => {
+                state.loading = false;
+                state.authorDashboardData = action.payload; // ✅ Saves the full JSON object here
+            })
+            .addCase(getAuthorDashboard.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload || "Failed to fetch author dashboard";
+            });
     }
 })
 
