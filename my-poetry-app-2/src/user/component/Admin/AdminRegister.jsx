@@ -13,7 +13,7 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 // Thunks
 import { registerUser } from "../../../store/thunk/AuthThunk";
-import { getAdminPoetryAll} from "../../../store/thunk/AdminThunk"; // Added status thunk
+import { getAdminPoetryAll, updateAdminStatus} from "../../../store/thunk/AdminThunk"; // Added status thunk
 
 export default function AdminManageAdmin() {
   const dispatch = useDispatch();
@@ -69,16 +69,27 @@ export default function AdminManageAdmin() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleStatusChange = async (adminId, newStatus) => {
-    try {
-      // Assuming your thunk takes { id, status }
-      await dispatch(updateAdminStatus({ id: adminId, status: newStatus })).unwrap();
-      alert("Status updated successfully!");
-      dispatch(getAdminPoetryAll()); // Refresh list
-    } catch (err) {
-      alert(err.message || "Failed to update status.");
-    }
-  };
+const handleStatusChange = async (adminId, selectedValue) => {
+  // Convert "STATUS_ACTIVE" -> "active" if your API expects lowercase
+  const formattedStatus = selectedValue.replace("STATUS_", "").toLowerCase();
+
+  try {
+    // We use unwrap() so we can catch errors specifically from this call
+    await dispatch(updateAdminStatus({ 
+      adminId: adminId, 
+      newStatus: formattedStatus 
+    })).unwrap();
+    
+    console.log(`Admin ${adminId} updated to ${formattedStatus}`);
+  } catch (err) {
+    // If the update fails, the UI might still show the wrong value 
+    // because of the local state. It's good to alert the user.
+    alert("Failed to update status: " + (err.message || err));
+    
+    // Optional: Refresh data to revert UI to the correct database state
+    dispatch(getAdminPoetryAll());
+  }
+};
 
   const handleSubmit = async (e) => {
     e.preventDefault();
