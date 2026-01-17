@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAuthorProfile, updateAuthorProfile } from "../../../store/thunk/UserThunk";
-// Import the requestWithdraw thunk here
 import { getAuthorDonation, requestWithdraw } from "../../../store/thunk/DonationThunk";
 import Swal from "sweetalert2";
 
@@ -97,21 +96,18 @@ export default function ContributroProfileDonation() {
             return;
         }
 
+        // 1. First Popup: Enter Amount
         const { value: amountStr } = await Swal.fire({
             title: 'Withdraw Funds',
             input: 'number',
             inputLabel: `Available Balance: RM ${currentBalance.toFixed(2)}`,
             inputPlaceholder: 'Enter amount to withdraw',
             showCancelButton: true,
-            confirmButtonText: 'Withdraw',
+            confirmButtonText: 'Next', // Changed to Next
             confirmButtonColor: "#FF5C5C",
             inputValidator: (value) => {
-                if (!value) {
-                    return 'You need to write an amount!';
-                }
-                if (parseFloat(value) <= 0) {
-                    return 'Amount must be greater than 0';
-                }
+                if (!value) return 'You need to write an amount!';
+                if (parseFloat(value) <= 0) return 'Amount must be greater than 0';
             }
         });
 
@@ -129,6 +125,53 @@ export default function ContributroProfileDonation() {
             return;
         }
 
+        // 2. Second Popup: Fake Bank Details Form 
+        const { value: bankDetails } = await Swal.fire({
+            title: 'Banking Details',
+            html: `
+                <div style="display: flex; flex-direction: column; gap: 15px; text-align: left;">
+                    <div>
+                        <label style="font-size: 12px; font-weight: bold; color: #666; text-transform: uppercase;">Full Name</label>
+                        <input id="swal-input-name" class="swal2-input" placeholder="Account Holder Name" style="margin: 5px 0; width: 100%;">
+                    </div>
+                    <div>
+                        <label style="font-size: 12px; font-weight: bold; color: #666; text-transform: uppercase;">Bank</label>
+                        <select id="swal-input-bank" class="swal2-input" style="margin: 5px 0; width: 100%;">
+                            <option value="" disabled selected>Select Bank</option>
+                            <option value="Maybank">Maybank</option>
+                            <option value="CIMB">CIMB Bank</option>
+                            <option value="Public">Public Bank</option>
+                            <option value="RHB">RHB Bank</option>
+                            <option value="HongLeong">Hong Leong Bank</option>
+                            <option value="AmBank">AmBank</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-size: 12px; font-weight: bold; color: #666; text-transform: uppercase;">Account Number</label>
+                        <input id="swal-input-acc" type="number" class="swal2-input" placeholder="e.g. 1122334455" style="margin: 5px 0; width: 100%;">
+                    </div>
+                </div>
+            `,
+            focusConfirm: false,
+            showCancelButton: true,
+            confirmButtonText: 'Confirm Withdrawal',
+            confirmButtonColor: "#FF5C5C",
+            preConfirm: () => {
+                const name = document.getElementById('swal-input-name').value;
+                const bank = document.getElementById('swal-input-bank').value;
+                const acc = document.getElementById('swal-input-acc').value;
+
+                if (!name || !bank || !acc) {
+                    Swal.showValidationMessage('Please fill in all banking details');
+                }
+                return { name, bank, acc };
+            }
+        });
+
+        // If user cancelled the bank form, stop here
+        if (!bankDetails) return;
+
+        // 3. Proceed to API Call
         const withdrawPayload = {
             authorId: authorId,
             amount: amountToWithdraw
@@ -140,10 +183,13 @@ export default function ContributroProfileDonation() {
                 Swal.fire({
                     icon: "success",
                     title: "Withdrawal Successful",
-                    text: `RM ${amountToWithdraw.toFixed(2)} has been withdrawn.`,
+                    html: `
+                        RM <b>${amountToWithdraw.toFixed(2)}</b> has been withdrawn.<br/>
+                        <span style="font-size: 12px; color: gray;">Funds will be transferred to <b>${bankDetails.bank}</b> ending in ...${bankDetails.acc.slice(-4)}</span>
+                    `,
                     confirmButtonColor: "#FF5C5C",
                 });
-                // Refresh the donation data to update the UI balance immediately
+                // Refresh data
                 dispatch(getAuthorDonation(accountId));
             })
             .catch((err) => {
@@ -165,7 +211,7 @@ export default function ContributroProfileDonation() {
                 color: "text-gray-800",
             },
             {
-                label: "Withdrawn", // Renamed for clarity
+                label: "Withdrawn",
                 value: `RM ${(authorDonationData.totalDonation - authorDonationData.currentDonationBalance).toFixed(2) || 0}`,
                 color: "text-gray-800",
             },

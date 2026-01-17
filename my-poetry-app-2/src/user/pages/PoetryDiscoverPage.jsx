@@ -4,7 +4,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { getAllAnalytics, addView } from "../../store/thunk/AnalyticsThunk";
 import Swal from "sweetalert2";
 
-// MUI Icons
+// MUI Icons & Components
+import { IconButton } from "@mui/material"; // ✅ Added missing import
 import PersonIcon from "@mui/icons-material/Person";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
@@ -20,7 +21,7 @@ const LikeButton = ({ initialLikes }) => {
   const [likesCount, setLikesCount] = useState(initialLikes);
 
   const handleLikeToggle = (e) => {
-    e.stopPropagation(); // Prevents triggering card click if applicable
+    e.stopPropagation(); 
     if (isLiked) {
       setLikesCount(prev => prev - 1);
     } else {
@@ -43,14 +44,12 @@ const LikeButton = ({ initialLikes }) => {
 
 export default function PoetryDiscoverPage() {
   const dispatch = useDispatch();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   // 1. Get data directly from Redux
   const { poetryAnalytics, loading } = useSelector((state) => state.analytics);
 
   /* ---------------- STATE ---------------- */
-  // FIX: Removed [analyticsData, setAnalyticsData]. We use poetryAnalytics directly.
-  
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedGenres, setSelectedGenres] = useState([]);
   const [selectedYear, setSelectedYear] = useState("All Year");
@@ -62,7 +61,6 @@ export default function PoetryDiscoverPage() {
 
   /* ---------------- FETCH ---------------- */
   useEffect(() => {
-    // We must fetch data to populate the Redux store
     dispatch(getAllAnalytics());
   }, [dispatch]);
 
@@ -76,22 +74,28 @@ export default function PoetryDiscoverPage() {
     setCurrentPage(1);
   };
 
-  // FIX: Filter directly on poetryAnalytics
+  // ✅ UPDATED FILTER LOGIC
   const filteredItems = (poetryAnalytics || []).filter((item) => {
     const poem = item.poetry;
     if (!poem) return false;
 
-    // Search Logic
+    // 1. STATUS FILTER: Only show APPROVED poetry
+    // We safely check poem.status?.name
+    if (poem.status?.name !== "APPROVED") {
+        return false;
+    }
+
+    // 2. Search Logic
     const matchSearch =
       !searchQuery ||
       poem.title?.toLowerCase().includes(searchQuery.toLowerCase());
 
-    // Genre Logic
+    // 3. Genre Logic
     const matchGenre =
       selectedGenres.length === 0 ||
       selectedGenres.includes(poem.category);
 
-    // Year Logic
+    // 4. Year Logic
     const year = poem.dateCreated
       ? new Date(poem.dateCreated).getFullYear().toString()
       : "";
@@ -103,18 +107,15 @@ export default function PoetryDiscoverPage() {
 
   /* ---------------- ACTIONS ---------------- */
   const handleView = (id) => {
-    // This dispatches the action, which hits the API, then updates Redux
     dispatch(addView(id));
     dispatch(setPoetryAnalyticsData(id));
-    // dispatch(viewCoauthor(id));
-    navigate("/poetry-detail")
+    navigate("/poetry-detail");
   };
 
   const toggleLike = (id) => {
     const next = new Set(likedPoetry);
     next.has(id) ? next.delete(id) : next.add(id);
     setLikedPoetry(next);
-    // You should probably dispatch(addLike(id)) here too
   };
 
   /* ---------------- PAGINATION ---------------- */
@@ -236,7 +237,6 @@ export default function PoetryDiscoverPage() {
                       <div className="flex justify-between items-center mb-4">
                         <span className="flex items-center gap-1 text-xs text-gray-400">
                           <VisibilityIcon sx={{ fontSize: 16 }} />
-                          {/* This view count will now update automatically via Redux */}
                           {item.viewCount || 0}
                         </span>
 
@@ -253,8 +253,6 @@ export default function PoetryDiscoverPage() {
                         </button>
                       </div>
 
-                      {/* FIX: Moved onClick to the Link wrapper or ensure button doesn't conflict.
-                          Ideally, handleView should be called, and navigation happens naturally via Link */}
                         <button onClick={() => handleView(item.poetry.id)} className="w-full bg-[#FF6F61] hover:bg-[#ff5a4a] text-white py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider shadow-md shadow-[#FF6F61]/20 transition-all active:scale-95">
                           Read Poetry
                         </button>
@@ -266,7 +264,7 @@ export default function PoetryDiscoverPage() {
           ) : (
             <div className="flex flex-col items-center justify-center mt-20 opacity-50">
               <p className="text-6xl mb-4">📜</p>
-              <p className="text-gray-500 font-medium">No poetry found matching your criteria.</p>
+              <p className="text-gray-500 font-medium">No approved poetry found matching your criteria.</p>
             </div>
           )}
 

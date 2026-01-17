@@ -1,11 +1,16 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom"; // 1. Import Navigate
 import { makeDonation } from "../../store/thunk/DonationThunk";
-import Swal from "sweetalert2"; // 1. Import SweetAlert
+import Swal from "sweetalert2";
+
+// Icon for back button
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 export default function DonationPage() {
   const { poetryAnalyticsData } = useSelector((state) => state.analytics);
   const dispatch = useDispatch();
+  const navigate = useNavigate(); // 2. Initialize Navigate
   
   const poetryTitle = poetryAnalyticsData?.poetry?.title || "Loading Title...";
   const authorName = poetryAnalyticsData?.poetry?.author?.user?.fullName || "Loading Author...";
@@ -49,7 +54,6 @@ export default function DonationPage() {
 
     setErrors(newErrors);
 
-    // If no errors, proceed to donation logic
     if (Object.keys(newErrors).length === 0) {
         handleDonation();
     }
@@ -61,12 +65,9 @@ export default function DonationPage() {
       "donationAmount": formData.amount
     };
 
-    // 2. Dispatch with unwrap() to handle the Promise response
     dispatch(makeDonation(donationData))
       .unwrap()
       .then((payload) => {
-        // payload is the response: { donationAmount: 145.5, poetryTitle: "..." }
-        
         Swal.fire({
           icon: 'success',
           title: 'Donation Successful!',
@@ -84,9 +85,11 @@ export default function DonationPage() {
             popup: 'rounded-[20px]',
             title: 'text-2xl font-bold text-gray-800'
           }
+        }).then(() => {
+            // Optional: Navigate back after success
+            navigate(-1); 
         });
 
-        // Optional: Clear form
         setFormData({ amount: "", cardName: "", cardNumber: "", expiry: "", cvv: "" });
       })
       .catch((error) => {
@@ -100,17 +103,24 @@ export default function DonationPage() {
   };
 
   return (
-    <div className="w-screen min-h-screen flex flex-row font-sans overflow-hidden bg-white">
+    <div className="w-screen min-h-screen flex flex-row font-sans overflow-hidden bg-white relative">
       
+      {/* 3. Back Button (Absolute Positioned) */}
+      <button 
+        onClick={() => navigate(-1)} // Go back to previous page
+        className="absolute top-6 left-6 z-50 flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm hover:shadow-md transition-all text-gray-600 font-bold text-xs uppercase tracking-wider hover:text-[#FF6F61]"
+      >
+        <ArrowBackIcon sx={{ fontSize: 16 }} /> Back
+      </button>
+
       {/* Decorative Side Gradient */}
       <div className="w-[15%] md:w-[20%] lg:w-[25%] bg-gradient-to-b from-coral-light to-coral shrink-0"></div>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col lg:flex-row items-center justify-center gap-6 p-6 overflow-y-auto">
+      <div className="flex-1 flex flex-col lg:flex-row items-center justify-center gap-6 p-6 overflow-y-auto pt-16 lg:pt-6">
         
         {/* ================= LEFT CARD: DONATION INFO ================= */}
         <div className="w-full max-w-sm lg:max-w-md h-[600px] bg-white rounded-[30px] p-6 shadow-xl shadow-gray-100 border border-black/20 flex flex-col justify-center">
-          
           <div className="w-full">
             <div className="text-center mb-8">
               <h1 className="text-3xl lg:text-4xl font-bold tracking-tight text-gray-900 leading-tight">
@@ -135,7 +145,7 @@ export default function DonationPage() {
                 <input 
                   type="text" 
                   readOnly
-                  value={poetryTitle}
+                  value={poetryTitle} 
                   className="w-full bg-gray-50 border border-black/10 rounded-xl px-4 py-3 text-sm text-gray-500 font-medium outline-none cursor-not-allowed"
                 />
               </div>
@@ -160,14 +170,9 @@ export default function DonationPage() {
 
         {/* ================= RIGHT CARD: PAYMENT DETAILS ================= */}
         <div className="w-full max-w-sm lg:max-w-md h-[600px] bg-white rounded-[30px] p-6 shadow-xl shadow-gray-100 border border-black/20 flex flex-col justify-center">
-          
-          {/* Changed onSubmit to trigger validateForm */}
           <form onSubmit={validateForm} className="space-y-5 w-full">
-            
             <div className="space-y-3">
                <h2 className="text-sm font-bold text-gray-800 ml-1 border-b pb-1">Payment Details</h2>
-               
-               {/* Name */}
                <div>
                   <input 
                   type="text" 
@@ -182,7 +187,6 @@ export default function DonationPage() {
             </div>
 
             <div className="space-y-3">
-                {/* Card Number */}
                 <div className="relative">
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>
@@ -200,7 +204,6 @@ export default function DonationPage() {
                 </div>
 
                 <div className="flex gap-3 pt-2">
-                    {/* Expiry */}
                     <div className="relative flex-1">
                         <input 
                             type="text" 
@@ -214,7 +217,6 @@ export default function DonationPage() {
                         {errors.expiry && <p className="text-red-500 text-[10px] mt-1 ml-1 absolute -bottom-4">{errors.expiry}</p>}
                     </div>
                     
-                    {/* CVV */}
                     <div className="relative flex-1">
                         <input 
                             type="password" 
@@ -242,4 +244,4 @@ export default function DonationPage() {
       </div>
     </div>
   );
-} 
+}

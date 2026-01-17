@@ -22,7 +22,8 @@ export default function AuthorDashboard() {
 
   // ✅ 2. Fetch Data on Mount
   useEffect(() => {
-    dispatch(getAuthorDashboard());
+    const accountId = localStorage.getItem("accountId")
+    dispatch(getAuthorDashboard(accountId));
   }, [dispatch]);
 
   // ✅ 3. Helper: Currency Formatter
@@ -131,7 +132,7 @@ export default function AuthorDashboard() {
       {/* Charts Section - Takes remaining height without scrolling */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 min-h-0">
         
-        {/* BAR CHART */}
+        {/* BAR CHART */} 
         <div className="lg:col-span-2 bg-white border border-gray-100 rounded-[24px] p-6 shadow-sm flex flex-col h-full">
           <div className="flex justify-between items-center mb-4 shrink-0">
              <div>

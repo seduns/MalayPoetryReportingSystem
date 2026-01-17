@@ -1,12 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createPoetry } from "../../../store/thunk/PoetryThunk";
-import { checkCoauthor } from "../../../store/thunk/CoauthorThunk";
+// IMPORT YOUR AUTHOR THUNK HERE
+import { getAllAuthor } from "../../../store/thunk/AuthorThunk"; 
 import Swal from "sweetalert2";
 
 export default function ContributorCreatePoetry() {
   const dispatch = useDispatch();
   const accountId = localStorage.getItem("accountId");
+
+  // 1. Get Author Data from Redux
+  // Make sure 'author' matches the name in your rootReducer (e.g., state.author or state.user)
+  const { authorList, loading } = useSelector((state) => state.author);
 
   // Form fields state
   const [formData, setFormData] = useState({
@@ -18,7 +23,29 @@ export default function ContributorCreatePoetry() {
 
   // Co-author logic
   const [coauthorInput, setCoauthorInput] = useState("");
-  const [coauthors, setCoauthors] = useState([]); // { publicId, fullName }
+  const [coauthors, setCoauthors] = useState([]); // Stores: { publicId, fullName }
+  
+  // Autocomplete State
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [selectedCandidate, setSelectedCandidate] = useState(null); // Holds the full author object temporarily
+  const wrapperRef = useRef(null); // For detecting clicks outside
+
+  // 2. Fetch Authors on Mount
+  useEffect(() => {
+    dispatch(getAllAuthor());
+  }, [dispatch]);
+
+  // 3. Handle Click Outside to close dropdown
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+        setShowSuggestions(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [wrapperRef]);
 
   // Handle form field changes
   const handleChange = (e) => {
@@ -26,12 +53,56 @@ export default function ContributorCreatePoetry() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Add co-author by public ID
-  const handleAddCoauthor = async () => {
-    if (!coauthorInput.trim()) return;
+  // 4. Handle Search / Typing
+  const handleSearchChange = (e) => {
+    const userInput = e.target.value;
+    setCoauthorInput(userInput);
+    setSelectedCandidate(null); // Reset selection if user keeps typing
+
+    if (userInput.trim() && authorList) {
+      // Filter logic: Check if name includes input (case-insensitive)
+      const filtered = authorList.filter((author) => 
+        author.user.fullName.toLowerCase().includes(userInput.toLowerCase()) &&
+        author.status === "STATUS_ACTIVE" // Optional: Only show active authors
+      );
+      setSuggestions(filtered);
+      setShowSuggestions(true);
+    } else {
+      setSuggestions([]);
+      setShowSuggestions(false);
+    }
+  };
+
+  // 5. Handle Clicking a Name in Dropdown
+  const handleSelectSuggestion = (author) => {
+    setCoauthorInput(author.user.fullName); // Show name in input
+    setSelectedCandidate(author); // Store the object
+    setSuggestions([]);
+    setShowSuggestions(false);
+  };
+
+  // 6. Add co-author (Logic Updated)
+  const handleAddCoauthor = () => {
+    // Logic: If a candidate was selected via dropdown, use it.
+    // If not, try to find an exact name match in the list.
+    let authorToAdd = selectedCandidate;
+
+    if (!authorToAdd) {
+        // Fallback: Check if the text matches someone exactly
+        authorToAdd = authorList?.find(a => a.user.fullName.toLowerCase() === coauthorInput.toLowerCase());
+    }
+
+    if (!authorToAdd) {
+        Swal.fire({
+            icon: "warning",
+            title: "Author not found",
+            text: "Please select a valid author from the list.",
+        });
+        return;
+    }
 
     // Prevent duplicate
-    if (coauthors.some((co) => co.publicId === coauthorInput)) {
+    if (coauthors.some((co) => co.publicId === authorToAdd.publicId)) {
       Swal.fire({
         icon: "warning",
         title: "Already added",
@@ -40,18 +111,15 @@ export default function ContributorCreatePoetry() {
       return;
     }
 
-    try {
-      const result = await dispatch(checkCoauthor(coauthorInput)).unwrap();
-      // Result example: { id: 6, publicId: "1420", fullName: "Muhd NAIM Ahmad" }
-      setCoauthors((prev) => [...prev, { publicId: result.publicId, fullName: result.fullName }]);
-      setCoauthorInput("");
-    } catch (error) {
-      Swal.fire({
-        icon: "error",
-        title: "Author not found",
-        text: "The author public ID does not exist",
-      });
-    }
+    // Add to list (Backend only needs publicId later, but we store name for UI)
+    setCoauthors((prev) => [
+        ...prev, 
+        { publicId: authorToAdd.publicId, fullName: authorToAdd.user.fullName }
+    ]);
+    
+    // Reset fields
+    setCoauthorInput("");
+    setSelectedCandidate(null);
   };
 
   // Remove co-author
@@ -68,6 +136,7 @@ export default function ContributorCreatePoetry() {
       content: formData.content,
       description: formData.description,
       category: formData.category.toUpperCase(),
+      // Extract just the IDs for the backend
       coauthorPublicIds: coauthors.map((co) => co.publicId),
     };
 
@@ -163,23 +232,45 @@ export default function ContributorCreatePoetry() {
               </select>
             </div>
 
-            {/* Co-Author Section */}
-            <div className="space-y-2">
+            {/* Co-Author Section - UPDATED */}
+            <div className="space-y-2 relative" ref={wrapperRef}>
               <label className="text-gray-500 font-bold text-xs uppercase ml-1">Co-Author</label>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={coauthorInput}
-                  onChange={(e) => setCoauthorInput(e.target.value)}
-                  placeholder="Enter author public ID"
-                  className="flex-1 bg-[#F3F6F9] border-none rounded-xl px-4 py-3 text-sm outline-none"
-                />
+              <div className="flex gap-2 relative">
+                
+                {/* Search Input Container */}
+                <div className="flex-1 relative">
+                    <input
+                        type="text"
+                        value={coauthorInput}
+                        onChange={handleSearchChange}
+                        placeholder="Search author name..."
+                        className="w-full bg-[#F3F6F9] border-none rounded-xl px-4 py-3 text-sm outline-none"
+                        autoComplete="off"
+                    />
+
+                    {/* Autocomplete Dropdown */}
+                    {showSuggestions && suggestions.length > 0 && (
+                        <ul className="absolute z-50 w-full bg-white border border-gray-100 rounded-xl mt-1 shadow-xl max-h-48 overflow-y-auto">
+                            {suggestions.map((author) => (
+                                <li
+                                    key={author.id}
+                                    onClick={() => handleSelectSuggestion(author)}
+                                    className="px-4 py-3 hover:bg-red-50 cursor-pointer text-sm text-gray-700 flex justify-between items-center transition-colors border-b border-gray-50 last:border-0"
+                                >
+                                    <span className="font-medium">{author.user.fullName}</span>
+                                    <span className="text-xs text-gray-400">@{author.user.username}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </div>
+
                 <button
                   type="button"
                   onClick={handleAddCoauthor}
                   className="bg-[#FF5C5C] text-white px-6 py-2 rounded-xl text-xs font-bold hover:bg-[#eb4b4b] transition-all"
                 >
-                  Find
+                  Add
                 </button>
               </div>
 
@@ -194,7 +285,7 @@ export default function ContributorCreatePoetry() {
                     <button
                       type="button"
                       onClick={() => handleRemoveCoauthor(co.publicId)}
-                      className="text-red-500 font-bold hover:text-red-700"
+                      className="text-red-500 font-bold hover:text-red-700 ml-1"
                     >
                       ×
                     </button>
